@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECRET CONTROL PANEL | BOSS ONLY</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=DynaPuff:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS ARCHITECTURE: SECRET-ADMIN-V800 
+           Giao diện tối ưu cho việc quản lý nhanh, bảo mật bằng cách giấu link
+        */
+        :root {
+            --p-pink: #ffafcc;
+            --s-pink: #ffc8dd;
+            --accent: #ff4d6d;
+            --success: #2ecc71;
+            --dark: #2d3436;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fbcfe8 0%, #e9d5ff 100%);
+            background-attachment: fixed;
+            font-family: 'Comfortaa', cursive;
+            display: flex; flex-direction: column; align-items: center;
+            padding-bottom: 100px;
+        }
+
+        /* --- HEADER COMMAND --- */
+        header {
+            width: 100%; padding: 25px 5%;
+            background: white; display: flex;
+            justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area h1 { font-family: 'DynaPuff'; color: var(--accent); font-size: 1.8rem; }
+
+        /* --- STATS GRID --- */
+        .stats-grid {
+            width: 90%; max-width: 1200px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; margin-top: 40px;
+        }
+
+        .stat-card {
+            background: white; padding: 35px; border-radius: 45px;
+            text-align: center; border: 5px solid white;
+            box-shadow: 0 15px 35px rgba(255, 175, 204, 0.2);
+            transition: 0.4s;
+        }
+        .stat-card:hover { transform: translateY(-10px); border-color: var(--p-pink); }
+        .stat-card i { font-size: 2.5rem; color: var(--p-pink); margin-bottom: 15px; }
+        .stat-card h2 { font-family: 'DynaPuff'; font-size: 3rem; color: var(--dark); }
+        .stat-card p { font-weight: 700; color: #aaa; text-transform: uppercase; }
+
+        /* --- CONTROL TABLE --- */
+        .main-container {
+            width: 95%; max-width: 1300px;
+            background: var(--glass); margin-top: 50px;
+            border-radius: 60px; border: 8px solid white;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 30px 40px; background: #fff5f7;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #eee;
+        }
+
+        .search-box {
+            position: relative; width: 400px;
+        }
+        .search-box input {
+            width: 100%; padding: 15px 25px 15px 55px;
+            border-radius: 30px; border: 2px solid var(--s-pink);
+            outline: none; font-family: inherit; font-weight: 700;
+        }
+        .search-box i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--p-pink); }
+
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th { padding: 25px; text-align: left; background: #fafafa; color: #888; font-family: 'DynaPuff'; }
+        td { padding: 20px 25px; border-bottom: 1px solid #f2f2f2; font-weight: 700; color: #444; }
+
+        /* Status Badges */
+        .badge {
+            padding: 8px 18px; border-radius: 25px; font-size: 0.8rem;
+            color: white; display: inline-block; font-weight: 900;
+        }
+        .status-true { background: var(--success); box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3); }
+        .status-false { background: var(--accent); box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3); }
+
+        /* Buttons */
+        .btn-group { display: flex; gap: 10px; }
+        .btn {
+            padding: 12px 20px; border: none; border-radius: 20px;
+            cursor: pointer; font-family: 'DynaPuff'; transition: 0.3s;
+            color: white; font-size: 0.85rem;
+        }
+        .btn-ok { background: var(--success); }
+        .btn-no { background: var(--accent); }
+        .btn-del { background: #333; }
+        .btn:hover { transform: scale(1.1) rotate(2deg); filter: brightness(1.1); }
+
+        /* Decorations */
+        #lottie-admin-bg { width: 80px; height: 80px; }
+        .floating-panda { position: fixed; bottom: 20px; right: 20px; width: 150px; z-index: 100; }
+
+        /* Loading */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 9999; display: flex;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div id="lottie-load" style="width: 300px;"></div>
+        <h2 style="font-family:'DynaPuff'; color:var(--accent)">DANG TAI DU LIEU BI MAT...</h2>
+    </div>
+
+    <header>
+        <div class="logo-area">
+            <div id="lottie-admin-bg"></div>
+            <h1>BOSS COMMAND CENTER</h1>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-del" onclick="window.location.href='trangchu.html'">VÀO TRANG CHỦ 🏠</button>
+            <button class="btn btn-ok" onclick="fetchAll()">LÀM MỚI 🔄</button>
+        </div>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fa-solid fa-users"></i>
+            <h2 id="count-all">0</h2>
+            <p>Tổng Thành Viên</p>
+        </div>
+        <div class="stat-card">
+            <i class="fa-solid fa-hourglass-half" style="color: var(--accent);"></i>
+            <h2 id="count-wait" style="color: var(--accent);">0</h2>
+            <p>Đang Chờ Duyệt</p>
+        </div>
+        <div class="stat-card">
+            <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+            <h2 id="count-active" style="color: var(--success);">0</h2>
+            <p>Đã Hoạt Động</p>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="table-header">
+            <h2 style="font-family:'DynaPuff'; color:#555">DANH SÁCH TÀI KHOẢN</h2>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="adminSearch" placeholder="Tìm tên hoặc SĐT Boss...">
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>TÊN BOSS</th>
+                    <th>SỐ ĐIỆN THOẠI</th>
+                    <th>MẬT KHẨU</th>
+                    <th>TRẠNG THÁI</th>
+                    <th>THAO TÁC QUYỀN LỰC</th>
+                </tr>
+            </thead>
+            <tbody id="adminTableBody">
+                </tbody>
+        </table>
+    </div>
+
+    <div id="lottie-panda-float" class="floating-panda"></div>
+
+    <script>
+        // 1. Kết nối Database
+        const SB_URL = "https://eyvfpinisvsrsipckmgv.supabase.co";
+        const SB_KEY = "sb_publishable_I_610XtWjFtUFtvacEl8GQ_xDiV8lNV";
+        const _sb = supabase.createClient(SB_URL, SB_KEY);
+
+        // 2. Load Animations
+        lottie.loadAnimation({
+            container: document.getElementById('lottie-load'),
+            renderer: 'svg', loop: true, autoplay: true,
+            path: 'https://assets9.lottiefiles.com/packages/lf20_96bovdur.json'
+        });
+        lottie.loadAnimation({
+            container: document.getElementById('lottie-admin-bg'),
+            renderer: 'svg', loop: true, autoplay: true,
+            path: 'https://assets5.lottiefiles.com/packages/lf20_tiviy633.json'
+        });
+        lottie.loadAnimation({
+            container: document.getElementById('lottie-panda-float'),
+            renderer: 'svg', loop: true, autoplay: true,
+            path: 'https://assets3.lottiefiles.com/packages/lf20_7kz9of7c.json'
+        });
+
+        // 3. Logic lấy dữ liệu
+        async function fetchAll() {
+            const { data, error } = await _sb.from('accounts_vip').select('*').order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            renderAdminTable(data);
+            updateAdminStats(data);
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+
+        function renderAdminTable(users) {
+            const body = document.getElementById('adminTableBody');
+            body.innerHTML = '';
+
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${u.full_name}</td>
+                    <td>${u.phone}</td>
+                    <td style="color:var(--accent)">${u.password}</td>
+                    <td>
+                        <span class="badge ${u.is_active ? 'status-true' : 'status-false'}">
+                            ${u.is_active ? 'V.I.P' : 'CHỜ DUYỆT'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            ${u.is_active 
+                                ? `<button class="btn btn-no" onclick="toggleBoss('${u.id}', false)">KHÓA</button>`
+                                : `<button class="btn btn-ok" onclick="toggleBoss('${u.id}', true)">DUYỆT</button>`
+                            }
+                            <button class="btn btn-del" onclick="deleteBoss('${u.id}')">XÓA</button>
+                        </div>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        function updateAdminStats(users) {
+            document.getElementById('count-all').innerText = users.length;
+            document.getElementById('count-wait').innerText = users.filter(x => !x.is_active).length;
+            document.getElementById('count-active').innerText = users.filter(x => x.is_active).length;
+        }
+
+        // 4. Thao tác Duyệt/Khóa
+        async function toggleBoss(id, status) {
+            const { error } = await _sb.from('accounts_vip').update({ is_active: status }).eq('id', id);
+            if(!error) {
+                Swal.fire({ icon: 'success', title: status ? 'Đã duyệt Boss!' : 'Đã khóa Boss!', timer: 1000, showConfirmButton: false });
+                fetchAll();
+            }
+        }
+
+        // 5. Thao tác Xóa
+        async function deleteBoss(id) {
+            const confirm = await Swal.fire({
+                title: 'XÓA TÀI KHOẢN?',
+                text: "Boss chắc chắn muốn xóa vĩnh viễn người này chứ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff4d6d',
+                confirmButtonText: 'XÓA NGAY',
+                cancelButtonText: 'HỦY'
+            });
+
+            if(confirm.isConfirmed) {
+                const { error } = await _sb.from('accounts_vip').delete().eq('id', id);
+                if(!error) {
+                    Swal.fire('Đã xóa xong!', '', 'success');
+                    fetchAll();
+                }
+            }
+        }
+
+        // 6. Tìm kiếm thời gian thực
+        document.getElementById('adminSearch').addEventListener('input', async (e) => {
+            const s = e.target.value.toLowerCase();
+            const { data } = await _sb.from('accounts_vip').select('*');
+            const filtered = data.filter(u => u.full_name.toLowerCase().includes(s) || u.phone.includes(s));
+            renderAdminTable(filtered);
+        });
+
+        // Khởi động
+        window.onload = fetchAll;
+
+    </script>
+</body>
+</html>
