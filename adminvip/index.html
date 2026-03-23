@@ -3,259 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOSS ADMIN | TAB SYSTEM</title>
+    <title>SUPREME COMMAND | DARK EDITION</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=DynaPuff:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        /* CSS ARCHITECTURE: ADMIN-TAB-v900 */
+        /* CSS ARCHITECTURE: CYBER-LUXURY-ADMIN v1.0
+           TRỰC QUAN - MẠNH MẼ - ĐẲNG CẤP
+        */
         :root {
-            --p-pink: #ffafcc; --s-pink: #ffc8dd; --accent: #ff4d6d;
-            --success: #00b894; --warning: #f39c12; --dark: #2d3436;
-            --glass: rgba(255, 255, 255, 0.98);
+            --bg-dark: #0a0a0c;
+            --card-dark: #141417;
+            --neon-green: #00ff88;
+            --neon-red: #ff3e3e;
+            --neon-blue: #00d4ff;
+            --neon-gold: #ffcc00;
+            --text-gray: #a0a0ab;
+            --border-glow: rgba(255, 255, 255, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            min-height: 100vh; background: #fff5f8;
-            font-family: 'Comfortaa', cursive; padding-bottom: 50px;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 62, 62, 0.05) 0%, transparent 40%);
         }
 
-        /* --- HEADER & TAB NAVIGATION --- */
+        /* --- HEADER COMMAND CENTER --- */
         header {
-            width: 100%; background: white; padding: 20px 5%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        .admin-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .logo { font-family: 'DynaPuff'; color: var(--accent); font-size: 1.8rem; }
-
-        .tab-menu {
-            display: flex; gap: 10px; background: #f0f0f0;
-            padding: 8px; border-radius: 40px; width: fit-content; margin: 0 auto;
-        }
-
-        .tab-btn {
-            padding: 12px 35px; border: none; border-radius: 35px;
-            font-family: 'DynaPuff'; cursor: pointer; transition: 0.4s;
-            background: transparent; color: #888; font-size: 0.9rem;
-        }
-
-        .tab-btn.active {
-            background: var(--accent); color: white;
-            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.3);
-        }
-
-        /* --- CONTAINER & TABLES --- */
-        .container {
-            width: 95%; max-width: 1300px; margin: 40px auto;
-            background: var(--glass); border-radius: 50px;
-            border: 8px solid white; box-shadow: 0 30px 60px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-
-        .panel { display: none; padding: 0; }
-        .panel.active { display: block; animation: fadeIn 0.5s ease; }
-
-        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
-
-        .table-head {
-            padding: 30px 40px; background: #fff9fa; border-bottom: 2px solid #eee;
+            width: 100%; height: 90px;
+            background: rgba(20, 20, 23, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glow);
             display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; position: sticky; top: 0; z-index: 1000;
+        }
+
+        .brand {
+            display: flex; align-items: center; gap: 15px;
+        }
+        .brand i { font-size: 2rem; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue); }
+        .brand h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.5rem; letter-spacing: 3px;
+            background: linear-gradient(90deg, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* --- NAVIGATION TABS --- */
+        .nav-container {
+            display: flex; justify-content: center; margin: 40px 0;
+        }
+        .nav-tabs {
+            background: var(--card-dark); padding: 5px; border-radius: 12px;
+            display: flex; border: 1px solid var(--border-glow);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .tab-trigger {
+            padding: 15px 35px; border-radius: 8px; border: none;
+            background: transparent; color: var(--text-gray);
+            font-family: 'Orbitron', sans-serif; font-size: 0.8rem;
+            font-weight: 700; cursor: pointer; transition: 0.4s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .tab-trigger.active {
+            background: linear-gradient(135deg, #333, #000);
+            color: #fff; box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        /* --- MAIN DASHBOARD AREA --- */
+        .dashboard {
+            max-width: 1400px; margin: 0 auto; padding: 0 20px;
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- TABLE STYLING --- */
+        .table-container {
+            background: var(--card-dark); border-radius: 20px;
+            border: 1px solid var(--border-glow); overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
         table { width: 100%; border-collapse: collapse; }
-        th { padding: 25px; text-align: left; background: #fafafa; color: #aaa; font-family: 'DynaPuff'; }
-        td { padding: 20px 25px; border-bottom: 1px solid #f8f8f8; font-weight: 700; color: #444; }
-
-        /* --- BUTTONS --- */
-        .btn-action {
-            padding: 10px 20px; border: none; border-radius: 20px;
-            cursor: pointer; font-family: 'DynaPuff'; transition: 0.3s;
-            color: white; font-size: 0.8rem;
+        th {
+            background: rgba(255, 255, 255, 0.02); padding: 25px;
+            text-align: left; color: var(--text-gray);
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem; letter-spacing: 2px;
         }
-        .btn-approve { background: var(--success); }
-        .btn-lock { background: var(--warning); }
-        .btn-delete { background: var(--dark); }
-        .btn-action:hover { transform: scale(1.1); filter: brightness(1.1); }
-
-        /* --- LOADER --- */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 9999; display: flex; justify-content: center; align-items: center;
+        td {
+            padding: 20px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-weight: 600; color: #e1e1e6;
         }
+        tr:hover { background: rgba(255, 255, 255, 0.01); }
+
+        /* --- ACTION BUTTONS (MẠNH MẼ) --- */
+        .btn-group { display: flex; gap: 12px; }
+
+        .btn-core {
+            padding: 10px 22px; border: none; border-radius: 6px;
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem;
+            font-weight: 700; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .btn-approve {
+            background: rgba(0, 255, 136, 0.1); color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+        .btn-approve:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 20px var(--neon-green); }
+
+        .btn-delete {
+            background: rgba(255, 62, 62, 0.1); color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+        .btn-delete:hover { background: var(--neon-red); color: #fff; box-shadow: 0 0 20px var(--neon-red); }
+
+        .btn-lock {
+            background: rgba(255, 204, 0, 0.1); color: var(--neon-gold);
+            border: 1px solid var(--neon-gold);
+        }
+        .btn-lock:hover { background: var(--neon-gold); color: #000; box-shadow: 0 0 20px var(--neon-gold); }
+
+        /* --- STATUS BADGE --- */
+        .status {
+            padding: 5px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: 800;
+            text-transform: uppercase; border: 1px solid transparent;
+        }
+        .status-active { color: var(--neon-green); border-color: var(--neon-green); background: rgba(0,255,136,0.05); }
+        .status-pending { color: var(--neon-gold); border-color: var(--neon-gold); background: rgba(255,204,0,0.05); }
+
+        /* Loader */
+        .loader-overlay {
+            position: fixed; inset: 0; background: var(--bg-dark);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
+        }
+        .scanner {
+            width: 200px; height: 2px; background: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+            animation: scan 2s infinite linear;
+        }
+        @keyframes scan { 0% {transform: translateY(-50px); opacity: 0;} 50% {opacity: 1;} 100% {transform: translateY(50px); opacity: 0;} }
+
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <div id="lottie-loading" style="width: 250px;"></div>
+    <div class="loader-overlay" id="loader">
+        <div style="text-align: center;">
+            <div class="scanner"></div>
+            <p style="font-family: 'Orbitron'; margin-top: 20px; letter-spacing: 5px;">INITIALIZING SECURE LINK...</p>
+        </div>
     </div>
 
     <header>
-        <div class="admin-nav">
-            <div class="logo">PANDA CONTROL 🐾</div>
-            <button class="btn-action btn-delete" onclick="window.location.href='trangchu.html'">VỀ TRANG CHỦ</button>
+        <div class="brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h1>COMMANDER PANDA</h1>
         </div>
-
-        <div class="tab-menu">
-            <button class="tab-btn active" onclick="switchTab('waiting')">📌 CHỜ PHÊ DUYỆT (<span id="count-wait">0</span>)</button>
-            <button class="tab-btn" onclick="switchTab('manage')">⚙️ QUẢN LÝ & XÓA (<span id="count-active">0</span>)</button>
+        <div class="btn-group">
+            <button class="btn-core btn-delete" style="border-radius: 30px;" onclick="window.location.href='trangchu.html'">SYSTEM EXIT</button>
         </div>
     </header>
 
-    <div class="container">
+    <div class="nav-container">
+        <div class="nav-tabs">
+            <button class="tab-trigger active" onclick="switchTab(event, 'pending-panel')">
+                <i class="fa-solid fa-bolt"></i> REQUESTS (<span id="count-pending">0</span>)
+            </button>
+            <button class="tab-trigger" onclick="switchTab(event, 'active-panel')">
+                <i class="fa-solid fa-users-gears"></i> OPERATIONS (<span id="count-active">0</span>)
+            </button>
+        </div>
+    </div>
+
+    <div class="dashboard">
         
-        <div id="panel-waiting" class="panel active">
-            <div class="table-head">
-                <h2 style="font-family:'DynaPuff'; color: var(--accent);">DANH SÁCH ĐỢI BOSS</h2>
+        <div id="pending-panel" class="tab-panel active">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IDENTIFIER</th>
+                            <th>ACCESS PHONE</th>
+                            <th>SECURITY KEY</th>
+                            <th>ACTION PROTOCOL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pending-body">
+                        </tbody>
+                </table>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tên Boss</th>
-                        <th>Số Điện Thoại</th>
-                        <th>Mật Khẩu</th>
-                        <th>Thao Tác</th>
-                    </tr>
-                </thead>
-                <tbody id="body-waiting"></tbody>
-            </table>
         </div>
 
-        <div id="panel-manage" class="panel">
-            <div class="table-head">
-                <h2 style="font-family:'DynaPuff'; color: #555;">TẤT CẢ THÀNH VIÊN V.I.P</h2>
-                <input type="text" id="searchBox" placeholder="Tìm tên hoặc SĐT..." style="padding: 10px 20px; border-radius: 20px; border: 1px solid #ddd;">
+        <div id="active-panel" class="tab-panel">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IDENTIFIER</th>
+                            <th>ACCESS PHONE</th>
+                            <th>SECURITY KEY</th>
+                            <th>STATUS</th>
+                            <th>MANAGEMENT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="active-body">
+                        </tbody>
+                </table>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tên Boss</th>
-                        <th>Số Điện Thoại</th>
-                        <th>Mật Khẩu</th>
-                        <th>Trạng Thái</th>
-                        <th>Quyền Hạn</th>
-                    </tr>
-                </thead>
-                <tbody id="body-manage"></tbody>
-            </table>
         </div>
 
     </div>
 
     <script>
-        // 1. Kết nối Supabase
         const SB_URL = "https://eyvfpinisvsrsipckmgv.supabase.co";
         const SB_KEY = "sb_publishable_I_610XtWjFtUFtvacEl8GQ_xDiV8lNV";
         const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-        // 2. Lottie Loading
-        lottie.loadAnimation({
-            container: document.getElementById('lottie-loading'),
-            renderer: 'svg', loop: true, autoplay: true,
-            path: 'https://assets9.lottiefiles.com/packages/lf20_96bovdur.json'
-        });
-
-        // 3. Chuyển Tab
-        function switchTab(tabName) {
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById('panel-' + tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
+        // Switch Tab
+        function switchTab(e, panelId) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            e.currentTarget.classList.add('active');
         }
 
-        // 4. Lấy dữ liệu
-        async function loadData() {
+        // Fetch Data
+        async function syncData() {
             const { data, error } = await _sb.from('accounts_vip').select('*').order('created_at', { ascending: false });
             if (!error) {
-                renderWaiting(data.filter(u => !u.is_active));
-                renderManage(data.filter(u => u.is_active));
+                renderPending(data.filter(u => !u.is_active));
+                renderActive(data.filter(u => u.is_active));
                 
-                document.getElementById('count-wait').innerText = data.filter(u => !u.is_active).length;
+                document.getElementById('count-pending').innerText = data.filter(u => !u.is_active).length;
                 document.getElementById('count-active').innerText = data.filter(u => u.is_active).length;
-                
                 document.getElementById('loader').style.display = 'none';
             }
         }
 
-        // 5. Render Tab 1 (Chờ duyệt)
-        function renderWaiting(users) {
-            const body = document.getElementById('body-waiting');
-            body.innerHTML = users.length ? '' : '<tr><td colspan="4" style="text-align:center; padding: 50px; color:#aaa;">Không có ai đang chờ Boss duyệt hết! ✨</td></tr>';
+        // Render Request Tab
+        function renderPending(users) {
+            const body = document.getElementById('pending-body');
+            body.innerHTML = users.length ? '' : '<tr><td colspan="4" style="text-align:center; padding: 40px; color: #555;">NO PENDING REQUESTS IN QUEUE</td></tr>';
             
             users.forEach(u => {
                 body.innerHTML += `
                     <tr>
-                        <td>${u.full_name}</td>
-                        <td>${u.phone}</td>
-                        <td>${u.password}</td>
+                        <td style="font-weight: 800; color: #fff;">${u.full_name.toUpperCase()}</td>
+                        <td style="font-family: 'Orbitron'; color: var(--neon-blue);">${u.phone}</td>
+                        <td style="letter-spacing: 2px;">${u.password}</td>
                         <td>
-                            <button class="btn-action btn-approve" onclick="updateStatus('${u.id}', true)">DUYỆT NGAY ✅</button>
-                            <button class="btn-action btn-delete" style="margin-left:5px" onclick="deleteUser('${u.id}')">XÓA</button>
+                            <div class="btn-group">
+                                <button class="btn-core btn-approve" onclick="actionStatus('${u.id}', true)">APPROVE</button>
+                                <button class="btn-core btn-delete" onclick="actionDelete('${u.id}')">DENY</button>
+                            </div>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        // 6. Render Tab 2 (Quản lý)
-        function renderManage(users) {
-            const body = document.getElementById('body-manage');
+        // Render Operations Tab
+        function renderActive(users) {
+            const body = document.getElementById('active-body');
             body.innerHTML = '';
             
             users.forEach(u => {
                 body.innerHTML += `
                     <tr>
-                        <td>${u.full_name}</td>
-                        <td>${u.phone}</td>
-                        <td style="color:var(--accent)">${u.password}</td>
-                        <td><span style="color:var(--success)">● ĐANG HOẠT ĐỘNG</span></td>
+                        <td style="font-weight: 800;">${u.full_name.toUpperCase()}</td>
+                        <td style="font-family: 'Orbitron';">${u.phone}</td>
+                        <td style="color: var(--neon-blue);">${u.password}</td>
+                        <td><span class="status status-active">OPERATIONAL</span></td>
                         <td>
-                            <button class="btn-action btn-lock" onclick="updateStatus('${u.id}', false)">KHÓA</button>
-                            <button class="btn-action btn-delete" onclick="deleteUser('${u.id}')">XÓA VĨNH VIỄN 🗑️</button>
+                            <div class="btn-group">
+                                <button class="btn-core btn-lock" onclick="actionStatus('${u.id}', false)">DEACTIVATE</button>
+                                <button class="btn-core btn-delete" onclick="actionDelete('${u.id}')">TERMINATE</button>
+                            </div>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        // 7. Cập nhật Status & Xóa
-        async function updateStatus(id, status) {
+        // Database Actions
+        async function actionStatus(id, status) {
             const { error } = await _sb.from('accounts_vip').update({ is_active: status }).eq('id', id);
             if (!error) {
-                Swal.fire({ icon: 'success', title: status ? 'Đã duyệt!' : 'Đã khóa!', timer: 1000, showConfirmButton: false });
-                loadData();
+                Swal.fire({ 
+                    background: '#141417', color: '#fff', 
+                    icon: 'success', title: status ? 'ACCESS GRANTED' : 'ACCESS REVOKED', 
+                    timer: 1000, showConfirmButton: false 
+                });
+                syncData();
             }
         }
 
-        async function deleteUser(id) {
+        async function actionDelete(id) {
             const result = await Swal.fire({
-                title: 'XÓA KHỎI HỆ THỐNG?',
-                text: "Boss chắc chắn muốn xóa vĩnh viễn chứ?",
+                title: 'TERMINATE ACCOUNT?',
+                text: "This action cannot be undone.",
                 icon: 'warning',
+                background: '#141417', color: '#fff',
                 showCancelButton: true,
-                confirmButtonColor: '#2d3436',
-                confirmButtonText: 'XÓA NGAY'
+                confirmButtonColor: '#ff3e3e',
+                confirmButtonText: 'CONFIRM DELETE'
             });
 
             if (result.isConfirmed) {
                 const { error } = await _sb.from('accounts_vip').delete().eq('id', id);
                 if (!error) {
-                    Swal.fire('Đã xóa!', '', 'success');
-                    loadData();
+                    Swal.fire({ background: '#141417', color: '#fff', title: 'DELETED', icon: 'success' });
+                    syncData();
                 }
             }
         }
 
-        window.onload = loadData;
+        window.onload = syncData;
     </script>
 </body>
 </html>
