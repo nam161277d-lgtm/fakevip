@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP BOSS | CUTIE ANIMATION TERMINAL</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&family=DynaPuff:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* SYSTEM: PINK AURA ANIMATION v10.0
+           THEME: KAWAII LUXURY
+        */
+        :root {
+            --p-pink: #ffafcc;
+            --s-pink: #ffc8dd;
+            --p-purple: #cdb4db;
+            --white-milk: #fcf6f5;
+            --text-main: #5d5d5d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(-45deg, #ffafcc, #bde0fe, #cdb4db, #ffc8dd);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Comfortaa', cursive;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- BACKGROUND ELEMENTS --- */
+        .decor-star {
+            position: absolute; color: white; opacity: 0.6;
+            animation: starTwinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+        }
+
+        /* --- MAIN CARD --- */
+        .main-card {
+            width: 420px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 60px;
+            padding: 60px 40px;
+            text-align: center;
+            border: 8px solid white;
+            box-shadow: 0 30px 60px rgba(255, 175, 204, 0.4);
+            position: relative;
+            z-index: 10;
+            animation: cardPop 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        @keyframes cardPop {
+            0% { transform: scale(0.5) translateY(100px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Lottie Container */
+        #lottie-icon {
+            width: 150px; height: 150px;
+            margin: -120px auto 20px;
+            background: white;
+            border-radius: 50%;
+            border: 5px solid var(--p-pink);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-family: 'DynaPuff', cursive;
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin-bottom: 35px;
+            text-shadow: 3px 3px 0 white;
+        }
+
+        /* --- INPUTS --- */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 20px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--p-pink);
+            font-size: 1.2rem;
+            animation: iconShake 4s infinite;
+        }
+
+        @keyframes iconShake {
+            0%, 90%, 100% { transform: translateY(-50%) rotate(0); }
+            93% { transform: translateY(-50%) rotate(10deg); }
+            96% { transform: translateY(-50%) rotate(-10deg); }
+        }
+
+        input {
+            width: 100%;
+            padding: 20px 20px 20px 55px;
+            border-radius: 35px;
+            border: 3px solid transparent;
+            background: white;
+            font-size: 1rem;
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+
+        input:focus {
+            border-color: var(--p-pink);
+            outline: none;
+            box-shadow: 0 10px 25px rgba(255, 175, 204, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* --- BUTTON --- */
+        .btn-action {
+            width: 100%;
+            padding: 22px;
+            background: linear-gradient(90deg, #ff758f, #ffb7c5);
+            border: none;
+            border-radius: 35px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: 0.4s;
+            box-shadow: 0 10px 20px rgba(255, 117, 143, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px) scale(1.02);
+            filter: brightness(1.1);
+        }
+
+        .btn-action:active { transform: scale(0.95); }
+
+        .btn-action span { position: relative; z-index: 2; }
+
+        /* Status Area */
+        #status-msg {
+            margin-top: 25px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            min-height: 25px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px;
+        }
+
+        .shake-error { animation: shake 0.5s ease-in-out; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .footer-nav {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .footer-nav a {
+            color: #ff4d6d;
+            text-decoration: none;
+            font-weight: 700;
+            border-bottom: 2px dashed;
+            margin-left: 5px;
+        }
+
+        /* Bong bóng bay */
+        .heart-float {
+            position: absolute;
+            bottom: -50px;
+            animation: floatUp 10s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="hearts-container"></div>
+
+    <div class="main-card">
+        <div id="lottie-icon"></div>
+
+        <h1>BOSS LOGIN</h1>
+
+        <div class="registration-form">
+            <div class="input-wrapper">
+                <i class="fa-solid fa-phone-volume"></i>
+                <input type="text" id="phone" placeholder="Số điện thoại Boss..." autocomplete="off">
+            </div>
+
+            <div class="input-wrapper">
+                <i class="fa-solid fa-face-kiss-wink-heart"></i>
+                <input type="password" id="pass" placeholder="Mật khẩu bí mật...">
+            </div>
+
+            <button class="btn-action" onclick="executeLogin()">
+                <span>VÀO NHÀ THÔI <i class="fa-solid fa-paw"></i></span>
+            </button>
+
+            <div id="status-msg"></div>
+
+            <div class="footer-nav">
+                Chưa có tài khoản? <a href="register.html">Đăng ký ngay nè! 🍭</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. SUPABASE CONFIG
+        const DB_URL = "https://eyvfpinisvsrsipckmgv.supabase.co";
+        const DB_KEY = "sb_publishable_I_610XtWjFtUFtvacEl8GQ_xDiV8lNV";
+        const _sb = supabase.createClient(DB_URL, DB_KEY);
+
+        // 2. LOTTIE ANIMATION (Icon Gấu Panda động)
+        const anim = lottie.loadAnimation({
+            container: document.getElementById('lottie-icon'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets5.lottiefiles.com/packages/lf20_tiviy633.json' // Panda cute icon
+        });
+
+        // 3. BACKGROUND EFFECTS (Ngôi sao & Trái tim bay)
+        function createDecor() {
+            const container = document.getElementById('hearts-container');
+            const icons = ['fa-heart', 'fa-star', 'fa-cloud', 'fa-cat'];
+            
+            for(let i=0; i<20; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('i');
+                    el.className = `fa-solid ${icons[Math.floor(Math.random()*icons.length)]} heart-float`;
+                    el.style.left = Math.random() * 100 + 'vw';
+                    el.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                    el.style.color = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`;
+                    el.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                    container.appendChild(el);
+                    
+                    // Xóa sau khi bay hết
+                    setTimeout(() => el.remove(), 10000);
+                }, i * 500);
+            }
+        }
+        setInterval(createDecor, 10000);
+        createDecor();
+
+        // 4. LOGIN LOGIC
+        async function executeLogin() {
+            const p = document.getElementById('phone').value;
+            const s = document.getElementById('pass').value;
+            const msg = document.getElementById('status-msg');
+            const card = document.querySelector('.main-card');
+
+            if(!p || !s) {
+                msg.innerHTML = "<span style='color:#ff4d6d'><i class='fa-solid fa-circle-exclamation'></i> Điền đủ nha Boss ơi!</span>";
+                card.classList.add('shake-error');
+                setTimeout(() => card.classList.remove('shake-error'), 500);
+                return;
+            }
+
+            msg.innerHTML = "<span style='color:#cdb4db'><i class='fa-solid fa-spinner fa-spin'></i> Đang kiểm tra...</span>";
+
+            try {
+                const { data, error } = await _sb
+                    .from('accounts_vip')
+                    .select('*')
+                    .eq('phone', p)
+                    .eq('password', s)
+                    .single();
+
+                if (error || !data) {
+                    msg.innerHTML = "<span style='color:#ff4d6d'><i class='fa-solid fa-face-frown'></i> Sai thông tin rồi!</span>";
+                    card.classList.add('shake-error');
+                    setTimeout(() => card.classList.remove('shake-error'), 500);
+                } else if (!data.is_active) {
+                    msg.innerHTML = "<span style='color:#ffb703'><i class='fa-solid fa-clock'></i> Đợi Boss duyệt đã nhé! 🐾</span>";
+                } else {
+                    msg.innerHTML = "<span style='color:#06d6a0'><i class='fa-solid fa-face-grin-stars'></i> Thành công! Đang vào...</span>";
+                    localStorage.setItem('boss_user', JSON.stringify(data));
+                    setTimeout(() => window.location.href = "trangchu.html", 1500);
+                }
+            } catch (e) {
+                msg.innerText = "Lỗi hệ thống rồi! 🙊";
+            }
+        }
+    </script>
+</body>
+</html>
