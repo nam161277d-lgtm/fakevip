@@ -3,223 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LOCAL JPEG GENERATOR | PANDA OS</title>
+    <title>ULTIMATE EDITOR | PANDA OS</title>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root { --bg: #050507; --momo: #d82d8b; --panel: #121216; }
-        
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: 'Lexend', sans-serif;
-            user-select: none; -webkit-user-select: none;
-            touch-action: none; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
+        body { background: var(--bg); color: #fff; overflow: hidden; position: fixed; width: 100vw; height: 100vh; display: flex; flex-direction: column; }
 
-        body { 
-            background: var(--bg); color: #fff; 
-            overflow: hidden; position: fixed; 
-            width: 100vw; height: 100vh;
-            display: flex; flex-direction: column;
-        }
+        .preview-box { flex: 1; background: #000; display: flex; justify-content: center; align-items: center; padding: 10px; border-bottom: 1px solid #222; overflow: hidden; }
+        #mainCanvas { max-height: 100%; max-width: 100%; object-fit: contain; border-radius: 15px; background: #111; }
 
-        /* KHUNG PREVIEW CHUẨN IPHONE RATIO */
-        .preview-box {
-            flex: 1; background: #000;
-            display: flex; justify-content: center; align-items: center;
-            padding: 10px; border-bottom: 1px solid #222;
-            overflow: hidden;
-        }
-
-        #mainCanvas {
-            max-height: 100%;
-            max-width: 100%;
-            object-fit: contain;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            background: #111;
-        }
-
-        /* EDITOR PANEL */
-        .editor-panel {
-            height: 45vh; background: var(--panel);
-            padding: 15px 20px; overflow-y: auto; 
-            touch-action: pan-y;
-            border-radius: 25px 25px 0 0;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        }
-
-        .section-title { font-size: 0.6rem; color: var(--momo); font-weight: 800; margin: 15px 0 8px; text-transform: uppercase; letter-spacing: 2px; }
+        .editor-panel { height: 50vh; background: var(--panel); padding: 15px 20px; overflow-y: auto; touch-action: pan-y; border-radius: 25px 25px 0 0; }
+        .section-title { font-size: 0.6rem; color: var(--momo); font-weight: 800; margin: 15px 0 8px; text-transform: uppercase; letter-spacing: 2px; border-left: 3px solid var(--momo); padding-left: 8px; }
         
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        input[type="text"] {
-            width: 100%; padding: 12px; background: #1a1a20; border: 1px solid #333;
-            border-radius: 10px; color: #fff; font-size: 0.8rem; outline: none;
-        }
+        input[type="text"] { width: 100%; padding: 12px; background: #1a1a20; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 0.8rem; outline: none; }
 
-        .coord-control { background: #1a1a20; padding: 12px; border-radius: 12px; margin-bottom: 8px; }
-        .coord-control label { font-size: 0.6rem; color: #666; display: flex; justify-content: space-between; font-weight: bold; }
-        input[type="range"] { width: 100%; accent-color: var(--momo); margin-top: 8px; }
+        .ctrl-card { background: #1a1a20; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
+        .ctrl-card label { font-size: 0.55rem; color: #888; display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .ctrl-card label b { color: var(--momo); }
+        input[type="range"] { width: 100%; accent-color: var(--momo); }
 
-        .btn-group { padding: 15px 20px; background: var(--panel); }
-        .btn-save { 
-            width: 100%; padding: 16px; border: none; border-radius: 15px; 
-            font-weight: 800; font-size: 0.8rem; background: var(--momo); 
-            color: #fff; text-transform: uppercase; letter-spacing: 1px;
-        }
-        
-        .qr-upload { 
-            display: block; background: #222; padding: 12px; border-radius: 10px; 
-            text-align: center; border: 1px dashed #444; color: #aaa; font-size: 0.7rem; 
-            margin-bottom: 10px; cursor: pointer;
-        }
+        .btn-group { padding: 15px 20px; background: var(--panel); position: sticky; bottom: 0; }
+        .btn-save { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; font-size: 0.8rem; background: var(--momo); color: #fff; text-transform: uppercase; }
+        .qr-upload { display: block; background: #222; padding: 12px; border-radius: 10px; text-align: center; border: 1px dashed #444; color: #aaa; font-size: 0.7rem; cursor: pointer; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-    <div class="preview-box">
-        <canvas id="mainCanvas"></canvas>
-    </div>
+    <div class="preview-box"><canvas id="mainCanvas"></canvas></div>
 
     <div class="editor-panel">
-        <p class="section-title">Thông tin cơ bản</p>
+        <p class="section-title">Dữ liệu</p>
         <div class="input-row">
             <input type="text" id="name" placeholder="Họ Tên" oninput="render()">
             <input type="text" id="phone" placeholder="Số điện thoại" oninput="render()">
         </div>
-        
-        <label class="qr-upload" for="qr-input"><i class="fa-solid fa-qrcode"></i> CHỌN QR (.PNG/.JPG)</label>
+        <label class="qr-upload" for="qr-input"><i class="fa-solid fa-qrcode"></i> CHỌN QR CỦA BẠN</label>
         <input type="file" id="qr-input" hidden accept="image/*" onchange="loadQR(this)">
 
-        <p class="section-title">Tùy chỉnh tọa độ Y (Dọc)</p>
-        
-        <div class="coord-control">
-            <label>Tọa độ Tên: <span id="v-name">1180</span></label>
+        <p class="section-title">Căn chỉnh HỌ TÊN</p>
+        <div class="ctrl-card">
+            <label>Ngang (X): <b id="vx-name">752</b> | Dọc (Y): <b id="vy-name">1180</b></label>
+            <input type="range" id="x-name" min="0" max="1284" value="752" oninput="render()">
             <input type="range" id="y-name" min="0" max="2778" value="1180" oninput="render()">
+            <label>Kích thước chữ: <b id="vs-name">40</b></label>
+            <input type="range" id="s-name" min="10" max="100" value="40" oninput="render()">
         </div>
 
-        <div class="coord-control">
-            <label>Tọa độ SĐT: <span id="v-phone">1050</span></label>
+        <p class="section-title">Căn chỉnh SỐ ĐIỆN THOẠI</p>
+        <div class="ctrl-card">
+            <label>Ngang (X): <b id="vx-phone">752</b> | Dọc (Y): <b id="vy-phone">1050</b></label>
+            <input type="range" id="x-phone" min="0" max="1284" value="752" oninput="render()">
             <input type="range" id="y-phone" min="0" max="2778" value="1050" oninput="render()">
         </div>
 
-        <div class="coord-control">
-            <label>Tọa độ QR: <span id="v-qr">1350</span></label>
+        <p class="section-title">Căn chỉnh QR CODE</p>
+        <div class="ctrl-card">
+            <label>Ngang (X): <b id="vx-qr">642</b> | Dọc (Y): <b id="vy-qr">1350</b></label>
+            <input type="range" id="x-qr" min="0" max="1284" value="642" oninput="render()">
             <input type="range" id="y-qr" min="0" max="2778" value="1350" oninput="render()">
+            <label>Kích thước QR: <b id="vs-qr">460</b></label>
+            <input type="range" id="s-qr" min="50" max="1000" value="460" oninput="render()">
         </div>
 
         <input type="text" id="time-manual" placeholder="Giờ iPhone (Mặc định: Tự động)" oninput="render()" style="margin-top:10px;">
-        
-        <div class="btn-group">
-            <button class="btn-save" onclick="exportImg()">XUẤT ẢNH CHUẨN 4K</button>
-        </div>
+        <div class="btn-group"><button class="btn-save" onclick="exportImg()">TẢI ẢNH VỀ MÁY</button></div>
     </div>
 
     <script>
-        // --- KHÓA ZOOM TUYỆT ĐỐI ---
         document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
-
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
         const imgBase = new Image();
         const imgQR = new Image();
         let qrLoaded = false;
+        const STD_WIDTH = 1284, STD_HEIGHT = 2778;
 
-        // Tỉ lệ chuẩn iPhone Pro Max
-        const STD_WIDTH = 1284;
-        const STD_HEIGHT = 2778;
-
-        // --- SỬ DỤNG FILE ẢNH LOCAL (anh3.JPEG) ---
         imgBase.src = 'anh3.JPEG'; 
-        
-        // Xử lý lỗi nếu không tìm thấy file
-        imgBase.onerror = () => {
-            Swal.fire({
-                icon: 'error',
-                title: 'LỖI NẠP ẢNH',
-                text: 'Không tìm thấy file "anh3.JPEG". Vui lòng kiểm tra lại thư mục và định dạng hoa thường!',
-                background: '#121216', color: '#fff'
-            });
-        };
-
-        imgBase.onload = () => {
-            canvas.width = STD_WIDTH;
-            canvas.height = STD_HEIGHT;
-            render();
-        };
+        imgBase.onload = () => { canvas.width = STD_WIDTH; canvas.height = STD_HEIGHT; render(); };
+        imgBase.onerror = () => { Swal.fire({ icon: 'error', title: 'THIẾU FILE', text: 'Cần file anh3.JPEG trong thư mục!', background: '#121216' }); };
 
         function loadQR(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    imgQR.src = e.target.result;
-                    imgQR.onload = () => { qrLoaded = true; render(); };
-                };
+                reader.onload = (e) => { imgQR.src = e.target.result; imgQR.onload = () => { qrLoaded = true; render(); }; };
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
         function render() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Vẽ ảnh nền local (co giãn về 1284x2778)
             ctx.drawImage(imgBase, 0, 0, STD_WIDTH, STD_HEIGHT);
 
             const name = document.getElementById('name').value.toUpperCase();
             const phone = document.getElementById('phone').value;
             const timeVal = document.getElementById('time-manual').value || getSystemTime();
 
-            document.getElementById('v-name').innerText = document.getElementById('y-name').value;
-            document.getElementById('v-phone').innerText = document.getElementById('y-phone').value;
-            document.getElementById('v-qr').innerText = document.getElementById('y-qr').value;
+            // Update Labels
+            const ids = ['x-name','y-name','s-name','x-phone','y-phone','x-qr','y-qr','s-qr'];
+            ids.forEach(id => document.getElementById('v' + (id.includes('s-') ? 's' : (id.includes('x-') ? 'x' : 'y')) + '-' + id.split('-')[1]).innerText = document.getElementById(id).value);
 
-            // Vẽ Giờ (StatusBar iPhone)
-            ctx.font = "bold 44px sans-serif";
-            ctx.fillStyle = "#000";
-            ctx.textAlign = "center";
+            // Giờ
+            ctx.font = "bold 44px sans-serif"; ctx.fillStyle = "#000"; ctx.textAlign = "center";
             ctx.fillText(timeVal, 160, 95);
 
-            // Vẽ Text nội dung
-            ctx.font = "40px sans-serif";
-            ctx.fillStyle = "#333";
+            // Vẽ Chữ
             ctx.textAlign = "center";
-            
-            const xPos = STD_WIDTH / 2 + 110; 
-            ctx.fillText(phone, xPos, document.getElementById('y-phone').value);
-            
-            ctx.font = "bold 40px sans-serif";
-            ctx.fillText(name, xPos, document.getElementById('y-name').value);
+            ctx.fillStyle = "#333";
+            ctx.font = document.getElementById('s-name').value + "px sans-serif";
+            ctx.fillText(phone, document.getElementById('x-phone').value, document.getElementById('y-phone').value);
+            ctx.font = "bold " + document.getElementById('s-name').value + "px sans-serif";
+            ctx.fillText(name, document.getElementById('x-name').value, document.getElementById('y-name').value);
 
-            // Vẽ QR Code
+            // Vẽ QR
             if(qrLoaded) {
-                const qrSize = 460;
-                const qrY = parseInt(document.getElementById('y-qr').value);
-                const qrX = STD_WIDTH / 2 - qrSize / 2 + 110;
-                ctx.drawImage(imgQR, qrX, qrY, qrSize, qrSize);
+                const s = parseInt(document.getElementById('s-qr').value);
+                ctx.drawImage(imgQR, document.getElementById('x-qr').value - s/2, document.getElementById('y-qr').value, s, s);
             }
         }
 
-        function getSystemTime() {
-            const now = new Date();
-            return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-        }
+        function getSystemTime() { const now = new Date(); return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0'); }
 
         function exportImg() {
-            Swal.fire({
-                title: 'ĐANG KHỞI TẠO...',
-                text: 'Hệ thống đang render chất lượng cao',
-                timer: 1000,
-                showConfirmButton: false,
-                didOpen: () => { Swal.showLoading(); }
-            }).then(() => {
-                const dataUrl = canvas.toDataURL('image/png', 1.0);
-                const link = document.createElement('a');
-                link.download = `PANDA_MOMO_JPEG_${Date.now()}.png`;
-                link.href = dataUrl;
-                link.click();
-            });
+            const dataUrl = canvas.toDataURL('image/png', 1.0);
+            const link = document.createElement('a');
+            link.download = `PANDA_EXPORT_${Date.now()}.png`;
+            link.href = dataUrl;
+            link.click();
+            Swal.fire({ icon: 'success', title: 'ĐÃ TẢI XUỐNG', timer: 1000, showConfirmButton: false, background: '#121216' });
         }
     </script>
 </body>
