@@ -2,140 +2,145 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ULTIMATE EDITOR | PANDA OS</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SCANNER PRO v4 | PANDA OS</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050507; --momo: #d82d8b; --panel: #121216; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; user-select: none; -webkit-user-select: none; touch-action: none; }
-        body { background: var(--bg); color: #fff; overflow: hidden; position: fixed; width: 100vw; height: 100vh; display: flex; flex-direction: column; }
+        :root { --momo: #d82d8b; --bg: #000; --panel: #16161a; --text-dim: #888; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #fff; overflow: hidden; display: flex; flex-direction: column; height: 100vh; position: fixed; width: 100%; height: 100%; }
+        
+        /* PREVIEW AREA (CHỐNG ZOOM) */
+        .preview { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; position: relative; overflow: hidden; }
+        canvas { max-height: 98%; max-width: 98%; border: 1px solid #222; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.8); pointer-events: none; }
 
-        .preview-box { flex: 1; background: #000; display: flex; justify-content: center; align-items: center; padding: 10px; border-bottom: 1px solid #222; overflow: hidden; }
-        #mainCanvas { max-height: 100%; max-width: 100%; object-fit: contain; border-radius: 15px; background: #111; }
+        /* CONTROLS (CUỘN NỘI BỘ) */
+        .controls { height: 50vh; background: var(--panel); padding: 15px 20px; overflow-y: auto; touch-action: pan-y; border-radius: 25px 25px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); padding-bottom: 80px; }
+        
+        .cat-title { font-size: 0.65rem; color: var(--momo); font-weight: 800; margin: 15px 0 10px; text-transform: uppercase; letter-spacing: 2px; border-left: 3px solid var(--momo); padding-left: 8px; }
 
-        .editor-panel { height: 50vh; background: var(--panel); padding: 15px 20px; overflow-y: auto; touch-action: pan-y; border-radius: 25px 25px 0 0; }
-        .section-title { font-size: 0.6rem; color: var(--momo); font-weight: 800; margin: 15px 0 8px; text-transform: uppercase; letter-spacing: 2px; border-left: 3px solid var(--momo); padding-left: 8px; }
+        .log-panel { background: #1a1a20; padding: 12px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(0, 242, 255, 0.2); }
+        .log-panel p { font-size: 0.7rem; color: #00f2ff; font-family: 'JetBrains Mono', monospace; line-height: 1.4; white-space: pre-wrap; word-break: break-all; }
+
+        .ctrl-group { background: #1a1a20; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
+        .ctrl-group label { display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--text-dim); margin-bottom: 5px; font-weight: 700; }
+        .ctrl-group label b { color: var(--momo); font-size: 0.85rem; }
+        input[type="range"] { width: 100%; accent-color: var(--momo); margin-top: 5px; }
         
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        input[type="text"] { width: 100%; padding: 12px; background: #1a1a20; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 0.8rem; outline: none; }
-
-        .ctrl-card { background: #1a1a20; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #222; }
-        .ctrl-card label { font-size: 0.55rem; color: #888; display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .ctrl-card label b { color: var(--momo); }
-        input[type="range"] { width: 100%; accent-color: var(--momo); }
-
-        .btn-group { padding: 15px 20px; background: var(--panel); position: sticky; bottom: 0; }
-        .btn-save { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; font-size: 0.8rem; background: var(--momo); color: #fff; text-transform: uppercase; }
-        .qr-upload { display: block; background: #222; padding: 12px; border-radius: 10px; text-align: center; border: 1px dashed #444; color: #aaa; font-size: 0.7rem; cursor: pointer; }
+        input[type="text"] { width: 100%; padding: 12px; background: #222; border: 1px solid #333; color: #fff; border-radius: 10px; font-size: 0.8rem; outline: none; transition: 0.3s; }
+        input[type="text"]:focus { border-color: var(--momo); background: #2a2a2e; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <div class="preview-box"><canvas id="mainCanvas"></canvas></div>
+<div class="preview"><canvas id="canvas"></canvas></div>
 
-    <div class="editor-panel">
-        <p class="section-title">Dữ liệu</p>
-        <div class="input-row">
-            <input type="text" id="name" placeholder="Họ Tên" oninput="render()">
-            <input type="text" id="phone" placeholder="Số điện thoại" oninput="render()">
-        </div>
-        <label class="qr-upload" for="qr-input"><i class="fa-solid fa-qrcode"></i> CHỌN QR CỦA BẠN</label>
-        <input type="file" id="qr-input" hidden accept="image/*" onchange="loadQR(this)">
-
-        <p class="section-title">Căn chỉnh HỌ TÊN</p>
-        <div class="ctrl-card">
-            <label>Ngang (X): <b id="vx-name">752</b> | Dọc (Y): <b id="vy-name">1180</b></label>
-            <input type="range" id="x-name" min="0" max="1284" value="752" oninput="render()">
-            <input type="range" id="y-name" min="0" max="2778" value="1180" oninput="render()">
-            <label>Kích thước chữ: <b id="vs-name">40</b></label>
-            <input type="range" id="s-name" min="10" max="100" value="40" oninput="render()">
-        </div>
-
-        <p class="section-title">Căn chỉnh SỐ ĐIỆN THOẠI</p>
-        <div class="ctrl-card">
-            <label>Ngang (X): <b id="vx-phone">752</b> | Dọc (Y): <b id="vy-phone">1050</b></label>
-            <input type="range" id="x-phone" min="0" max="1284" value="752" oninput="render()">
-            <input type="range" id="y-phone" min="0" max="2778" value="1050" oninput="render()">
-        </div>
-
-        <p class="section-title">Căn chỉnh QR CODE</p>
-        <div class="ctrl-card">
-            <label>Ngang (X): <b id="vx-qr">642</b> | Dọc (Y): <b id="vy-qr">1350</b></label>
-            <input type="range" id="x-qr" min="0" max="1284" value="642" oninput="render()">
-            <input type="range" id="y-qr" min="0" max="2778" value="1350" oninput="render()">
-            <label>Kích thước QR: <b id="vs-qr">460</b></label>
-            <input type="range" id="s-qr" min="50" max="1000" value="460" oninput="render()">
-        </div>
-
-        <input type="text" id="time-manual" placeholder="Giờ iPhone (Mặc định: Tự động)" oninput="render()" style="margin-top:10px;">
-        <div class="btn-group"><button class="btn-save" onclick="exportImg()">TẢI ẢNH VỀ MÁY</button></div>
+<div class="controls">
+    <div class="log-panel">
+        <p>BOSS COPY TOÀN BỘ DÒNG NÀY GỬI TÔI:</p>
+        <p id="final-log">NAME(X:?, Y:?, S:?) | PHONE(X:?, Y:?, S:?)</p>
     </div>
 
-    <script>
-        document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
-        const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d');
-        const imgBase = new Image();
-        const imgQR = new Image();
-        let qrLoaded = false;
-        const STD_WIDTH = 1284, STD_HEIGHT = 2778;
+    <p class="cat-title">Dữ liệu TEST</p>
+    <div class="input-row">
+        <input type="text" id="inName" placeholder="Tên (Ví dụ: NGUYEN VAN A)" oninput="drawAll()">
+        <input type="text" id="inPhone" placeholder="SĐT (Ví dụ: 0912345678)" oninput="drawAll()">
+    </div>
 
-        imgBase.src = 'anh3.JPEG'; 
-        imgBase.onload = () => { canvas.width = STD_WIDTH; canvas.height = STD_HEIGHT; render(); };
-        imgBase.onerror = () => { Swal.fire({ icon: 'error', title: 'THIẾU FILE', text: 'Cần file anh3.JPEG trong thư mục!', background: '#121216' }); };
+    <p class="cat-title">Căn chỉnh HỌ TÊN</p>
+    <div class="ctrl-group">
+        <label>Ngang (X): <b id="vxn">1100</b></label>
+        <input type="range" id="xn" min="0" max="1284" value="1100" oninput="drawAll()">
+        <label>Dọc (Y): <b id="vyn">1180</b></label>
+        <input type="range" id="yn" min="0" max="2778" value="1180" oninput="drawAll()">
+        <label>Size: <b id="vsn">40</b></label>
+        <input type="range" id="sn" min="10" max="150" value="40" oninput="drawAll()">
+    </div>
 
-        function loadQR(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => { imgQR.src = e.target.result; imgQR.onload = () => { qrLoaded = true; render(); }; };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
+    <p class="cat-title">Căn chỉnh SỐ ĐIỆN THOẠI</p>
+    <div class="ctrl-group">
+        <label>Ngang (X): <b id="vxp">1100</b></label>
+        <input type="range" id="xp" min="0" max="1284" value="1100" oninput="drawAll()">
+        <label>Dọc (Y): <b id="vyp">1050</b></label>
+        <input type="range" id="yp" min="0" max="2778" value="1050" oninput="drawAll()">
+        <label>Size: <b id="vsp">38</b></label>
+        <input type="range" id="sp" min="10" max="150" value="38" oninput="drawAll()">
+    </div>
+</div>
 
-        function render() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(imgBase, 0, 0, STD_WIDTH, STD_HEIGHT);
+<script>
+    // --- CHỐNG ZOOM ---
+    document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+    
+    const cvs = document.getElementById('canvas');
+    const ctx = cvs.getContext('2d');
+    const img = new Image();
+    
+    // Nạp phôi ảnh
+    img.src = 'anh3.JPEG';
 
-            const name = document.getElementById('name').value.toUpperCase();
-            const phone = document.getElementById('phone').value;
-            const timeVal = document.getElementById('time-manual').value || getSystemTime();
+    // Cấu hình Canvas tỉ lệ 4K (iPhone Pro Max)
+    cvs.width = 1284;
+    cvs.height = 2778;
 
-            // Update Labels
-            const ids = ['x-name','y-name','s-name','x-phone','y-phone','x-qr','y-qr','s-qr'];
-            ids.forEach(id => document.getElementById('v' + (id.includes('s-') ? 's' : (id.includes('x-') ? 'x' : 'y')) + '-' + id.split('-')[1]).innerText = document.getElementById(id).value);
+    img.onload = () => { drawAll(); };
+    img.onerror = () => { Swal.fire({ icon: 'error', title: 'THIẾU FILE', text: 'Cần file "anh3.JPEG" trong cùng thư mục!', background: '#121216', color: '#fff' }); };
 
-            // Giờ
-            ctx.font = "bold 44px sans-serif"; ctx.fillStyle = "#000"; ctx.textAlign = "center";
-            ctx.fillText(timeVal, 160, 95);
+    function drawAll() {
+        ctx.clearRect(0,0,1284,2778);
+        
+        // 1. Vẽ phôi nền (Fix chuẩn 1284x2778)
+        ctx.drawImage(img, 0, 0, 1284, 2778);
 
-            // Vẽ Chữ
-            ctx.textAlign = "center";
-            ctx.fillStyle = "#333";
-            ctx.font = document.getElementById('s-name').value + "px sans-serif";
-            ctx.fillText(phone, document.getElementById('x-phone').value, document.getElementById('y-phone').value);
-            ctx.font = "bold " + document.getElementById('s-name').value + "px sans-serif";
-            ctx.fillText(name, document.getElementById('x-name').value, document.getElementById('y-name').value);
+        // 2. Lấy dữ liệu và Cập nhật nhãn
+        const v = (id) => document.getElementById(id).value;
+        const setLabel = (id, v) => document.getElementById('v'+id).innerText = v;
 
-            // Vẽ QR
-            if(qrLoaded) {
-                const s = parseInt(document.getElementById('s-qr').value);
-                ctx.drawImage(imgQR, document.getElementById('x-qr').value - s/2, document.getElementById('y-qr').value, s, s);
-            }
-        }
+        const xn = parseInt(v('xn')), yn = parseInt(v('yn')), sn = parseInt(v('sn'));
+        const xp = parseInt(v('xp')), yp = parseInt(v('yp')), sp = parseInt(v('sp'));
 
-        function getSystemTime() { const now = new Date(); return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0'); }
+        setLabel('xn', xn); setLabel('yn', yn); setLabel('sn', sn);
+        setLabel('xp', xp); setLabel('yp', yp); setLabel('sp', sp);
 
-        function exportImg() {
-            const dataUrl = canvas.toDataURL('image/png', 1.0);
-            const link = document.createElement('a');
-            link.download = `PANDA_EXPORT_${Date.now()}.png`;
-            link.href = dataUrl;
-            link.click();
-            Swal.fire({ icon: 'success', title: 'ĐÃ TẢI XUỐNG', timer: 1000, showConfirmButton: false, background: '#121216' });
-        }
-    </script>
+        // 3. Cập nhật Log Chuyên Nghiệp để Boss copy
+        document.getElementById('final-log').innerText = `NAME(${xn}, ${yn}, ${sn}) | PHONE(${xp}, ${yp}, ${sp})`;
+
+        // 4. Lấy dữ liệu TEST
+        const nameVal = (document.getElementById('inName').value || "NGUYEN VAN A").toUpperCase();
+        const phoneVal = document.getElementById('inPhone').value || "0912345678";
+        
+        // Giờ (Lấy giờ thật để test vị trí luôn)
+        ctx.font = "bold 44px sans-serif"; ctx.fillStyle = "#000"; ctx.textAlign = "center";
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        ctx.fillText(timeStr, 160, 95);
+
+        // --- 5. VẼ CHỮ (CĂN LỀ PHẢI TUYỆT ĐỐI) ---
+        ctx.textAlign = "right"; // <--- ĐÂY LÀ CHÌA KHÓA!
+        ctx.fillStyle = "#333";
+
+        // Vẽ SĐT (Căn lề phải, trục X làm Anchor)
+        ctx.font = sp + "px sans-serif";
+        ctx.fillText(phoneVal, xp, yp);
+
+        // Vẽ Tên (Căn lề phải, trục X làm Anchor)
+        ctx.font = "bold " + sn + "px sans-serif";
+        ctx.fillText(nameVal, xn, yn);
+        
+        // --- 6. VẼ QR (CHỐT CỐ ĐỊNH THEO TOẠ ĐỘ BOSS GỬI) ---
+        // Toạ độ Boss gửi: X: 642, Y: 1941, Size: 325
+        const qx = 642, qy = 1941, qs = 325;
+        ctx.fillStyle = "rgba(216, 45, 139, 0.3)"; // Giả lập ô màu hồng
+        ctx.fillRect(qx - qs/2, qy, qs, qs); // Trục X cần trừ nửa Size vì Boss lấy tâm
+        ctx.strokeStyle = "#d82d8b"; ctx.lineWidth = 5;
+        ctx.strokeRect(qx - qs/2, qy, qs, qs);
+        
+        // Nhãn ghi chú cố định (để Boss biết QR đã chốt)
+        ctx.font = "bold 25px sans-serif"; ctx.fillStyle = "#ff007a"; ctx.textAlign = "center";
+        ctx.fillText("QR LOCKED", qx, qy + qs/2 + 10);
+    }
+</script>
 </body>
 </html>
