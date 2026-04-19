@@ -3,308 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>FAKE VIP BALANCE</title>
+    <title>PANDA ELITE - AUTO TIME</title>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ========================================
-           CYBERPUNK LUXURY DESIGN SYSTEM
-           ========================================
-        */
         :root {
             --momo: #d82d8b;
-            --momo-dark: #a01d63;
-            --bg: #050507;
-            --panel: #121216;
-            --input-bg: #1a1a20;
-            --border: #2a2a30;
+            --bg: #0f0f12;
+            --panel: #1c1c21;
+            --input-bg: #25252d;
+            --border: #33333d;
             --text-main: #ffffff;
-            --text-dim: #888890;
-            --neon: 0 0 15px rgba(216, 45, 139, 0.4);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* RESET & SCROLLBAR */
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Lexend', sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--momo); border-radius: 10px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; }
 
         body {
             background: var(--bg);
             color: var(--text-main);
-            overflow-x: hidden;
-            overflow-y: auto;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            touch-action: pan-y;
-        }
-
-        /* HEADER SECTION 
-        */
-        header {
-            padding: 20px;
-            background: var(--panel);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .logo-area { display: flex; align-items: center; gap: 10px; }
-        .logo-area i { color: var(--momo); font-size: 1.5rem; filter: drop-shadow(var(--neon)); }
-        .logo-text { font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
-
-        .system-status { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: #00ff88; text-transform: uppercase; }
-
-        /* MAIN EDITOR PANEL 
-        */
-        .container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
             padding: 20px;
-            flex: 1;
+            min-height: 100vh;
         }
 
         .editor-card {
             background: var(--panel);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            margin-bottom: 30px;
-        }
-
-        .group-title {
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: var(--momo);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .group-title::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(to right, rgba(216, 45, 139, 0.5), transparent);
-        }
-
-        .input-box { margin-bottom: 20px; position: relative; }
-        .input-box label {
-            display: block;
-            font-size: 0.6rem;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .input-box input {
             width: 100%;
-            padding: 16px 20px;
+            max-width: 450px;
+            padding: 25px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 10px; color: #888; margin-bottom: 5px; text-transform: uppercase; font-weight: 700; }
+        
+        input {
+            width: 100%;
+            padding: 14px;
             background: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
-            color: #fff;
-            font-size: 0.9rem;
+            color: white;
+            font-size: 16px;
             outline: none;
-            transition: var(--transition);
         }
 
-        .input-box input:focus {
-            border-color: var(--momo);
-            box-shadow: var(--neon);
-            background: #1f1f26;
-        }
-
-        .qr-upload-area {
+        .btn-download {
             width: 100%;
-            height: 120px;
-            border: 2px dashed var(--border);
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-bottom: 25px;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .qr-upload-area:hover {
-            border-color: var(--momo);
-            background: rgba(216, 45, 139, 0.05);
-        }
-
-        .qr-upload-area i { font-size: 1.8rem; color: var(--text-dim); }
-        .qr-upload-area span { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; }
-
-        .btn-action {
-            width: 100%;
-            padding: 20px;
-            border: none;
-            border-radius: 16px;
+            padding: 16px;
             background: var(--momo);
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
             cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            box-shadow: var(--neon);
+            margin-top: 10px;
         }
 
-        .btn-action:active { transform: scale(0.98); }
-        .btn-action:hover { background: var(--momo-dark); }
-
-        /* PREVIEW CANVAS AREA 
-        */
-        .preview-section {
-            padding: 0 20px 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .canvas-container {
-            position: relative;
-            max-width: 100%;
-            border-radius: 20px;
+        .canvas-wrap {
+            width: 100%;
+            max-width: 380px;
+            border-radius: 16px;
             overflow: hidden;
-            border: 1px solid var(--border);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        canvas {
-            display: block;
-            max-width: 100%;
-            height: auto;
-            background: #111;
-        }
-
-        /* CYBER SCAN EFFECT */
-        .scanline {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: rgba(216, 45, 139, 0.3);
-            z-index: 5;
-            animation: scan 4s linear infinite;
-        }
-
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
-        }
-
-        footer {
-            padding: 30px;
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* ========================================
-           RESPONSIVE TWEAKS
-           ========================================
-        */
-        @media (max-width: 480px) {
-            .container { padding: 15px; }
-            .editor-card { padding: 20px; }
-            .logo-text { font-size: 0.8rem; }
-        }
+        canvas { width: 100%; height: auto; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-    <header>
-        <div class="logo-area">
-            <i class="fa-solid fa-bolt"></i>
-            <div class="logo-text">Panda Elite v5</div>
+    <div class="editor-card">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: var(--momo); font-size: 1.2rem;">PANDA ELITE V5</h2>
+            <p style="font-size: 10px; color: #666;">AUTO TIME & CLEAN OVERLAP</p>
         </div>
-        <div class="system-status">
-            <i class="fa-solid fa-circle" style="font-size: 5px; vertical-align: middle;"></i>
-            System Online
+
+        <div class="input-group">
+            <label>Giờ iPhone (Tự động)</label>
+            <input type="text" id="iptTime" placeholder="15:22">
         </div>
-    </header>
 
-    <div class="container">
-        <div class="editor-card">
-            <div class="group-title">
-                <i class="fa-solid fa-id-card"></i> Thông tin giao dịch
-            </div>
-            
-            <div class="input-box">
-                <label>Số điện thoại thụ hưởng</label>
-                <input type="text" id="phone" placeholder="09xx xxx xxx" oninput="app.render()">
-            </div>
-
-            <div class="input-box">
-                <label>Họ và tên khách hàng</label>
-                <input type="text" id="name" placeholder="NGUYEN VAN A" oninput="app.render()">
-            </div>
-
-            <div class="group-title">
-                <i class="fa-solid fa-qrcode"></i> Mã QR xác thực
-            </div>
-
-            <label class="qr-upload-area" for="qr-input" id="drop-zone">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <span>NHẤN ĐỂ CHỌN HOẶC THẢ FILE QR</span>
-            </label>
-            <input type="file" id="qr-input" hidden accept="image/*" onchange="app.handleQR(this)">
-
-            <button class="btn-action" onclick="app.download()">
-                <i class="fa-solid fa-download"></i> Tải ảnh 4K
-            </button>
+        <div class="input-group">
+            <label>Số tiền hoàn trả</label>
+            <input type="text" id="iptPhone" placeholder="1.938.038">
         </div>
+
+        <div class="input-group">
+            <label>Họ và Tên</label>
+            <input type="text" id="iptName" placeholder="NGUYEN VAN QUANG" oninput="this.value = this.value.toUpperCase()">
+        </div>
+
+        <div class="input-group">
+            <label>Mã QR</label>
+            <input type="file" accept="image/*" onchange="app.handleQR(this)">
+        </div>
+
+        <button class="btn-download" onclick="app.download()">TẢI ẢNH NGAY</button>
     </div>
 
-    <div class="preview-section">
-        <div class="group-title" style="width: 100%; max-width: 600px; margin-bottom: 20px;">
-            <i class="fa-solid fa-eye"></i> Xem trước kết quả
-        </div>
-        <div class="canvas-container">
-            <div class="scanline"></div>
-            <canvas id="mainCanvas"></canvas>
-        </div>
+    <div class="canvas-wrap">
+        <canvas id="mainCanvas"></canvas>
     </div>
-
-    <footer>
-        &copy; 2026 PANDA DIGITAL SOLUTIONS. ALL RIGHTS RESERVED.
-    </footer>
 
     <script>
-        /* ========================================
-           CORE APPLICATION LOGIC
-           ========================================
-        */
         const app = {
             canvas: document.getElementById('mainCanvas'),
             ctx: null,
@@ -312,155 +122,96 @@
             imgQR: new Image(),
             qrReady: false,
 
-            // THÔNG SỐ KỸ THUẬT (BOSS CHỐT)
             config: {
                 w: 1284,
                 h: 2778,
-                name: { x: 708, y: 1841, size: 50 },
-                phone: { x: 534, y: 1615, size: 50 },
-                qr: { x: 642, y: 1941, size: 325 },
-                font: "'Lexend', sans-serif"
+                color: "#303233", 
+                fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+                // Tọa độ các thành phần
+                timePos: { x: 210, y: 95 }, 
+                phonePos: { x: 135, y: 1440 }, 
+                namePos: { x: 135, y: 1565 },  
+                qr: { x: 642, y: 1680, size: 360 } 
             },
 
-            // KHỞI TẠO HỆ THỐNG
             init() {
                 this.ctx = this.canvas.getContext('2d');
                 this.canvas.width = this.config.w;
                 this.canvas.height = this.config.h;
 
-                // Nạp phôi ảnh gốc
-                this.imgBase.src = 'anh3.JPEG';
-                this.imgBase.onload = () => this.render();
-                this.imgBase.onerror = () => this.notifyError();
+                // Gán giờ hiện tại vào ô nhập
+                const now = new Date();
+                document.getElementById('iptTime').value = now.getHours().toString().padStart(2, '0') + ':' + 
+                                                          now.getMinutes().toString().padStart(2, '0');
 
-                // Chặn Zoom đa điểm
-                document.addEventListener('touchstart', (e) => {
-                    if (e.touches.length > 1) e.preventDefault();
-                }, { passive: false });
-                
-                console.log("Panda OS: System Initialized...");
+                this.imgBase.src = 'B1914F97-A023-428C-8D8A-54D0FFC980AC.jpeg';
+                this.imgBase.onload = () => this.render();
+
+                document.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', () => this.render());
+                });
             },
 
-            // XỬ LÝ QR CODE
             handleQR(input) {
                 if (input.files && input.files[0]) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         this.imgQR.src = e.target.result;
-                        this.imgQR.onload = () => {
-                            this.qrReady = true;
-                            this.render();
-                            this.notifySuccess("Đã nạp mã QR thành công!");
-                        };
+                        this.imgQR.onload = () => { this.qrReady = true; this.render(); };
                     };
                     reader.readAsDataURL(input.files[0]);
                 }
             },
 
-            // RENDER ENGINE
             render() {
                 const { ctx, config, imgBase, imgQR, qrReady } = this;
-                
-                // Clear & Background
                 ctx.clearRect(0, 0, config.w, config.h);
+                
+                // 1. Vẽ phôi gốc
                 ctx.drawImage(imgBase, 0, 0, config.w, config.h);
 
-                // Dữ liệu từ Input
-                const nameText = (document.getElementById('name').value || "").toUpperCase();
-                const phoneText = document.getElementById('phone').value || "";
-                
-                // Vẽ Giờ (StatusBar)
-                this.drawStatusBar();
+                // --- BƯỚC QUAN TRỌNG: XOÁ GIỜ CŨ ---
+                // Vẽ một hình chữ nhật đè lên vị trí giờ cũ (màu trắng mờ theo phôi)
+                // Lưu ý: Màu #f2f2f2 là màu nền tương đối của thanh status MoMo
+                ctx.fillStyle = "#f2f2f2"; 
+                ctx.fillRect(80, 40, 250, 80); 
 
-                // Cài đặt phong cách chữ
-                ctx.fillStyle = "#333333";
-                ctx.textAlign = "right";
+                // 2. Vẽ Giờ mới (Tự động)
+                const timeText = document.getElementById('iptTime').value;
+                ctx.fillStyle = "#000000";
+                ctx.textAlign = "center";
+                ctx.font = `bold 46px ${config.fontFamily}`;
+                ctx.fillText(timeText, config.timePos.x, config.timePos.y);
 
-                // Vẽ Số điện thoại (Căn lề phải)
-                ctx.font = `400 ${config.phone.size}px ${config.font}`;
-                ctx.fillText(phoneText, config.phone.x, config.phone.y);
+                // 3. Vẽ Thông tin khách hàng
+                const phoneText = document.getElementById('iptPhone').value || "1.938.038";
+                const nameText = document.getElementById('iptName').value || "NGUYEN VAN QUANG";
 
-                // Vẽ Họ Tên (Căn lề phải)
-                ctx.font = `800 ${config.name.size}px ${config.font}`;
-                ctx.fillText(nameText, config.name.x, config.name.y);
+                ctx.textAlign = "left";
+                ctx.fillStyle = config.color;
 
-                // Vẽ QR Code
+                ctx.font = `400 42px ${config.fontFamily}`;
+                ctx.fillText(phoneText, config.phonePos.x, config.phonePos.y);
+
+                ctx.font = `bold 44px ${config.fontFamily}`;
+                ctx.fillText(nameText, config.namePos.x, config.namePos.y);
+
+                // 4. Vẽ QR
                 if (qrReady) {
                     const s = config.qr.size;
-                    const x = config.qr.x - (s / 2);
-                    const y = config.qr.y;
-                    
-                    // Vẽ bóng đổ cho QR thêm sang trọng
-                    ctx.shadowColor = "rgba(0,0,0,0.2)";
-                    ctx.shadowBlur = 15;
-                    ctx.drawImage(imgQR, x, y, s, s);
-                    ctx.shadowBlur = 0; // Reset shadow
+                    ctx.drawImage(imgQR, config.qr.x - (s/2), config.qr.y, s, s);
                 }
             },
 
-            // VẼ TRẠNG THÁI HỆ THỐNG
-            drawStatusBar() {
-                const now = new Date();
-                const time = now.getHours().toString().padStart(2, '0') + ':' + 
-                             now.getMinutes().toString().padStart(2, '0');
-                
-                this.ctx.font = `bold 44px ${this.config.font}`;
-                this.ctx.fillStyle = "#000000";
-                this.ctx.textAlign = "center";
-                this.ctx.fillText(time, 160, 95);
-            },
-
-            // XUẤT FILE ẢNH
             download() {
-                try {
-                    const link = document.createElement('a');
-                    link.download = `PANDA_ELITE_${Date.now()}.png`;
-                    link.href = this.canvas.toDataURL('image/png', 1.0);
-                    link.click();
-                    
-                    Swal.fire({
-                        title: 'SUCCESS',
-                        text: 'Ảnh đã được lưu vào máy Boss!',
-                        icon: 'success',
-                        background: '#121216',
-                        color: '#fff',
-                        confirmButtonColor: '#d82d8b'
-                    });
-                } catch (e) {
-                    this.notifyError("Không thể xuất ảnh. Vui lòng thử lại!");
-                }
-            },
-
-            // THÔNG BÁO
-            notifySuccess(msg) {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true
-                });
-                Toast.fire({ icon: 'success', title: msg });
-            },
-
-            notifyError(msg = "Lỗi nạp tài nguyên!") {
-                Swal.fire({
-                    title: 'SYSTEM ERROR',
-                    text: msg,
-                    icon: 'error',
-                    background: '#121216',
-                    color: '#fff'
-                });
+                const link = document.createElement('a');
+                link.download = `SUCCESS_${Date.now()}.png`;
+                link.href = this.canvas.toDataURL('image/png', 1.0);
+                link.click();
             }
         };
 
-        // KÍCH HOẠT KHI TRANG SẴN SÀNG
-        window.addEventListener('DOMContentLoaded', () => app.init());
-
-        /* END OF FILE
-           TOTAL LINES: 500+ (Including documentation and structure)
-           STATUS: READY FOR PRODUCTION
-        */
+        window.onload = () => app.init();
     </script>
 </body>
 </html>
