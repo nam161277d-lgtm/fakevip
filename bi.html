@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PANDA ELITE - TUNING Anh33.png</title>
+    <style>
+        :root { --momo: #d82d8b; --panel: #1a1a20; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background: #0a0a0c; color: #eee; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        .control-panel { 
+            background: var(--panel); width: 100%; max-width: 450px; padding: 20px; 
+            border-radius: 20px; border: 1px solid #333; margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .control-group { margin-bottom: 20px; border-bottom: 1px solid #2a2a30; padding-bottom: 15px; }
+        .control-group h3 { font-size: 13px; color: var(--momo); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
+
+        .row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        label { font-size: 11px; width: 90px; color: #999; }
+        input[type="range"] { flex: 1; accent-color: var(--momo); cursor: pointer; }
+        .val-box { font-size: 12px; width: 45px; text-align: right; color: #00ff88; font-family: monospace; font-weight: bold; }
+
+        .input-box { width: 100%; padding: 10px; background: #25252d; border: 1px solid #444; border-radius: 8px; color: white; margin-bottom: 10px; }
+
+        .canvas-wrap { width: 100%; max-width: 380px; border-radius: 15px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.8); border: 1px solid #333; }
+        canvas { width: 100%; height: auto; display: block; }
+        
+        .btn-save { width: 100%; padding: 15px; background: var(--momo); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <div class="control-panel">
+        <h2 style="text-align: center; margin-bottom: 20px; font-size: 1.2rem;">CĂN CHỈNH TOẠ ĐỘ LIVE</h2>
+        
+        <div class="control-group">
+            <h3>Nội dung hiển thị</h3>
+            <input type="text" id="iptAmount" class="input-box" placeholder="Số tiền (VD: 1.938.038)" oninput="app.render()">
+            <input type="text" id="iptName" class="input-box" placeholder="Họ và tên" oninput="this.value = this.value.toUpperCase(); app.render()">
+            <input type="file" id="qrFile" class="input-box" accept="image/*" onchange="app.handleQR(this)">
+        </div>
+
+        <div class="control-group">
+            <h3>1. Số tiền hoàn trả</h3>
+            <div class="row">
+                <label>Trái - Phải (X)</label>
+                <input type="range" id="amtX" min="0" max="1284" value="210" oninput="app.render()">
+                <div class="val-box" id="v_amtX">210</div>
+            </div>
+            <div class="row">
+                <label>Lên - Xuống (Y)</label>
+                <input type="range" id="amtY" min="1000" max="2000" value="1445" oninput="app.render()">
+                <div class="val-box" id="v_amtY">1445</div>
+            </div>
+            <div class="row">
+                <label>Kích cỡ (Size)</label>
+                <input type="range" id="amtS" min="20" max="100" value="44" oninput="app.render()">
+                <div class="val-box" id="v_amtS">44</div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>2. Họ và tên</h3>
+            <div class="row">
+                <label>Trái - Phải (X)</label>
+                <input type="range" id="nameX" min="0" max="1284" value="210" oninput="app.render()">
+                <div class="val-box" id="v_nameX">210</div>
+            </div>
+            <div class="row">
+                <label>Lên - Xuống (Y)</label>
+                <input type="range" id="nameY" min="1000" max="2000" value="1575" oninput="app.render()">
+                <div class="val-box" id="v_nameY">1575</div>
+            </div>
+            <div class="row">
+                <label>Kích cỡ (Size)</label>
+                <input type="range" id="nameS" min="20" max="100" value="44" oninput="app.render()">
+                <div class="val-box" id="v_nameS">44</div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>3. Mã QR (Tâm QR)</h3>
+            <div class="row">
+                <label>Trái - Phải (X)</label>
+                <input type="range" id="qrX" min="0" max="1284" value="642" oninput="app.render()">
+                <div class="val-box" id="v_qrX">642</div>
+            </div>
+            <div class="row">
+                <label>Lên - Xuống (Y)</label>
+                <input type="range" id="qrY" min="1500" max="2500" value="2000" oninput="app.render()">
+                <div class="val-box" id="v_qrY">2000</div>
+            </div>
+            <div class="row">
+                <label>To - Nhỏ (Size)</label>
+                <input type="range" id="qrS" min="100" max="600" value="340" oninput="app.render()">
+                <div class="val-box" id="v_qrS">340</div>
+            </div>
+        </div>
+
+        <button class="btn-save" onclick="app.download()">XUẤT ẢNH THÀNH PHẨM</button>
+    </div>
+
+    <div class="canvas-wrap">
+        <canvas id="mainCanvas"></canvas>
+    </div>
+
+    <script>
+        const app = {
+            canvas: document.getElementById('mainCanvas'),
+            ctx: null,
+            imgBase: new Image(),
+            imgQR: new Image(),
+            qrReady: false,
+
+            init() {
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = 1284;
+                this.canvas.height = 2778;
+                
+                // Nạp phôi Anh33.png
+                this.imgBase.src = 'Anh33.png'; 
+                this.imgBase.onload = () => this.render();
+            },
+
+            handleQR(input) {
+                if (input.files && input.files[0]) {
+                    const r = new FileReader();
+                    r.onload = (e) => { 
+                        this.imgQR.src = e.target.result; 
+                        this.imgQR.onload = () => { this.qrReady = true; this.render(); }; 
+                    };
+                    r.readAsDataURL(input.files[0]);
+                }
+            },
+
+            get(id) {
+                const v = document.getElementById(id).value;
+                document.getElementById('v_' + id).innerText = v;
+                return parseInt(v);
+            },
+
+            render() {
+                const ctx = this.ctx;
+                ctx.clearRect(0, 0, 1284, 2778);
+                
+                // 1. Vẽ phôi
+                ctx.drawImage(this.imgBase, 0, 0, 1284, 2778);
+
+                // 2. Vẽ Số tiền
+                const amtX = this.get('amtX'), amtY = this.get('amtY'), amtS = this.get('amtS');
+                const amtTxt = document.getElementById('iptAmount').value || "1.938.038";
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#303233";
+                ctx.font = `400 ${amtS}px sans-serif`;
+                ctx.fillText(amtTxt, amtX, amtY);
+
+                // 3. Vẽ Tên
+                const nameX = this.get('nameX'), nameY = this.get('nameY'), nameS = this.get('nameS');
+                const nameTxt = document.getElementById('iptName').value || "NGUYEN VAN QUANG";
+                ctx.font = `bold ${nameS}px sans-serif`;
+                ctx.fillText(nameTxt, nameX, nameY);
+
+                // 4. Vẽ QR
+                if (this.qrReady) {
+                    const qX = this.get('qrX'), qY = this.get('qrY'), qS = this.get('qrS');
+                    ctx.drawImage(this.imgQR, qX - (qS/2), qY - (qS/2), qS, qS);
+                }
+            },
+
+            download() {
+                const link = document.createElement('a');
+                link.download = `FINISH_${Date.now()}.png`;
+                link.href = this.canvas.toDataURL('image/png', 1.0);
+                link.click();
+            }
+        };
+
+        window.onload = () => app.init();
+    </script>
+</body>
+</html>
