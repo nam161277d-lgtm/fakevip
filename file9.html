@@ -65,9 +65,9 @@
                 textColor: "#303233", // Màu xám đen chuẩn MoMo
                 timePos: { x: 215, y: 100 }, 
                 // Tọa độ chuẩn sếp yêu cầu
-                amtPos: { x: 210, y: 1745 }, 
-                namePos: { x: 210, y: 1992 },  
-                phonePos: { x: 210, y: 2253 }
+                amtPos: { x: 240, y: 1845 }, 
+                namePos: { x: 240, y: 2030 },  
+                phonePos: { x: 240, y: 2230 }
             },
 
             init() {
@@ -112,15 +112,15 @@
                 ctx.fillStyle = config.textColor;
                 
                 // Số tiền tạm ứng
-                ctx.font = "400 44px -apple-system, sans-serif";
+                ctx.font = "400 52px -apple-system, sans-serif";
                 ctx.fillText(document.getElementById('iptAmount').value || "1.938.038", config.amtPos.x, config.amtPos.y);
 
                 // Họ tên
-                ctx.font = "400 44px -apple-system, sans-serif";
+                ctx.font = "400 52px -apple-system, sans-serif";
                 ctx.fillText(document.getElementById('iptName').value || "NGUYEN VAN QUANG", config.namePos.x, config.namePos.y);
 
                 // Số điện thoại
-                ctx.font = "400 44px -apple-system, sans-serif";
+                ctx.font = "400 52px -apple-system, sans-serif";
                 ctx.fillText(document.getElementById('iptPhone').value || "0987654321", config.phonePos.x, config.phonePos.y);
             },
 
