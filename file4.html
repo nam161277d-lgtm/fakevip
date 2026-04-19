@@ -67,9 +67,9 @@
                 textColor: "#303233", // Màu xám đen chuẩn MoMo
                 // Tọa độ tinh chỉnh cho Anh3.png
                 timePos: { x: 215, y: 100 }, 
-                amountPos: { x: 241, y: 1630, size: 52 }, 
-                namePos: { x: 241, y: 1822, size: 52 },  
-                qr: { x: 642, y: 2085, size: 318 } 
+                amountPos: { x: 210, y: 1824, size: 52 }, 
+                namePos: { x: 210, y: 1624, size: 52 },  
+                qr: { x: 642, y: 2106, size: 314 } 
             },
 
             init() {
@@ -82,7 +82,7 @@
                                                           now.getMinutes().toString().padStart(2, '0');
 
                 // Sử dụng ảnh Anh3.png như yêu cầu
-                this.imgBase.src = 'Anh33.png'; 
+                this.imgBase.src = 'Anh4.png'; 
                 this.imgBase.onload = () => this.render();
                 
                 document.getElementById('iptTime').addEventListener('input', () => this.render());
