@@ -67,10 +67,10 @@
                 textColor: "#333333",
                 timePos: { x: 215, y: 100 },
                 // Tọa độ căn chỉnh cho phôi Anh11.png
-                phonePos: { x: 125, y: 2360 }, 
-                amtPos: { x: 125, y: 2585 },
+                phonePos: { x: 160, y: 2410 }, 
+                amtPos: { x: 160, y: 2580 },
                 // TỌA ĐỘ VÀ KÍCH THƯỚC CHUẨN ĐỂ ĐÈ LÊN QR GỐC
-                qr: { x: 642, y: 1720, size: 480 } // Vị trí QR trung tâm đè lên phôi
+                qr: { x: 642, y: 1715, size: 495 } // Vị trí QR trung tâm đè lên phôi
             },
 
             init() {
@@ -131,7 +131,7 @@
                 // 4. Vẽ Thông tin Số điện thoại & Số tiền
                 ctx.textAlign = "left";
                 ctx.fillStyle = config.textColor;
-                ctx.font = "400 45px -apple-system, sans-serif";
+                ctx.font = "400 52px -apple-system, sans-serif";
                 
                 ctx.fillText(document.getElementById('iptPhone').value || "0987654321", config.phonePos.x, config.phonePos.y);
                 ctx.fillText(document.getElementById('iptAmount').value || "800.000", config.amtPos.x, config.amtPos.y);
