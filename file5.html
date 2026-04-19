@@ -67,9 +67,9 @@
                 textColor: "#303233", // Màu xám đen chuẩn MoMo
                 // Tọa độ tinh chỉnh cho Anh3.png
                 timePos: { x: 215, y: 100 }, 
-                amountPos: { x: 241, y: 1630, size: 52 }, 
+                amountPos: { x: 241, y: 1625, size: 52 }, 
                 namePos: { x: 241, y: 1822, size: 52 },  
-                qr: { x: 642, y: 2085, size: 318 } 
+                qr: { x: 642, y: 2088, size: 318 } 
             },
 
             init() {
@@ -125,11 +125,11 @@
                 ctx.fillStyle = config.textColor;
                 
                 // Số tiền
-                ctx.font = "400 44px -apple-system, sans-serif";
+                ctx.font = "400 52px -apple-system, sans-serif";
                 ctx.fillText(document.getElementById('iptAmount').value || "1.938.038", config.amountPos.x, config.amountPos.y);
 
                 // Họ tên
-                ctx.font = "bold 44px -apple-system, sans-serif";
+                ctx.font = "bold 52px -apple-system, sans-serif";
                 ctx.fillText(document.getElementById('iptName').value || "NGUYEN VAN QUANG", config.namePos.x, config.namePos.y);
 
                 // 4. Vẽ QR Code
