@@ -66,9 +66,9 @@
                 w: 1284, h: 2778, 
                 textColor: "#000000",
                 timePos: { x: 215, y: 105 },
-                phonePos: { x: 160, y: 2400 }, 
-                namePos: { x: 160, y: 2650 }, // Tọa độ cho Họ tên
-                qr: { x: 642, y: 1675, size: 545 } 
+                phonePos: { x: 160, y: 2250 }, 
+                namePos: { x: 160, y: 2550 }, // Tọa độ cho Họ tên
+                qr: { x: 642, y: 1575, size: 510 } 
             },
 
             init() {
@@ -119,15 +119,15 @@
 
                 // 4. Vẽ SĐT
                 ctx.textAlign = "left";
-                ctx.fillStyle = "#333333";
-                ctx.font = "500 48px sans-serif";
+                ctx.fillStyle = "#000000";
+                ctx.font = "500 52px sans-serif";
                 ctx.fillText(document.getElementById('iptPhone').value || "0987654321", config.phonePos.x, config.phonePos.y);
 
                 // 5. Vẽ HỌ VÀ TÊN (FONT TO, ĐẬM NHƯ MOMO)
                 ctx.textAlign = "left";
                 ctx.fillStyle = "#000000";
                 // Chỉnh font lên 65px và cực đậm (900)
-                ctx.font = "900 65px sans-serif";
+                ctx.font = "900 52px sans-serif";
                 const name = document.getElementById('iptName').value || "NGUYEN VAN A";
                 ctx.fillText(name.toUpperCase(), config.namePos.x, config.namePos.y);
             },
