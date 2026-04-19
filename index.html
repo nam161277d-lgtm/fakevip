@@ -196,6 +196,36 @@
         /* PHẦN LOGIC PHỤ (Dày 800 dòng)
            Xử lý touch-move, chặn click-spam, và dọn dẹp bộ nhớ đệm
         */
+            /* --- AUTO LOGOUT SYSTEM (1 HOUR SESSION) --- */
+        (function() {
+            const SESSION_TIMEOUT = 3600000; // 1 giờ tính bằng miliseconds
+            const loginTime = localStorage.getItem('sessionStartTime');
+
+            if (!loginTime) {
+                // Nếu chưa có mốc thời gian, thiết lập ngay bây giờ
+                localStorage.setItem('sessionStartTime', Date.now());
+            } else {
+                const currentTime = Date.now();
+                const elapsedTime = currentTime - parseInt(loginTime);
+
+                if (elapsedTime >= SESSION_TIMEOUT) {
+                    // Nếu đã quá 1 tiếng, xóa mốc thời gian và đăng xuất
+                    localStorage.removeItem('sessionStartTime');
+                    createNotify("Session expired. Redirecting...");
+                    setTimeout(() => logout(), 1500);
+                }
+            }
+
+            // Kiểm tra mỗi phút để đảm bảo tính chính xác nếu người dùng treo máy
+            setInterval(() => {
+                const startTime = localStorage.getItem('sessionStartTime');
+                if (startTime && (Date.now() - parseInt(startTime) >= SESSION_TIMEOUT)) {
+                    localStorage.removeItem('sessionStartTime');
+                    logout();
+                }
+            }, 60000);
+        })();
+
     </script>
 </body>
 </html>
