@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PANDA OS | ELITE PROTECTION</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #020204;
+            --card: rgba(18, 18, 26, 0.8);
+            --neon: #00f2ff;
+            --neon-pink: #ff007a;
+            --text: #ffffff;
+            --border: rgba(0, 242, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Lexend'; overflow: hidden; position: fixed; }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .bg-animate { position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle at 50% 50%, #0a0a15 0%, #020204 100%); }
+        .scan-line {
+            position: absolute; width: 100%; height: 10px;
+            background: linear-gradient(to bottom, transparent, var(--neon), transparent);
+            opacity: 0.1; animation: scanning 4s linear infinite;
+        }
+        @keyframes scanning { from { top: -10%; } to { top: 110%; } }
+
+        /* --- HEADER --- */
+        header {
+            height: 70px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
+        }
+        .logo-box { display: flex; align-items: center; gap: 10px; animation: breathe 3s ease-in-out infinite; }
+        @keyframes breathe { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; filter: drop-shadow(0 0 10px var(--neon)); } }
+
+        /* --- NOTIFICATION --- */
+        #notification-area { position: fixed; top: 80px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast {
+            background: var(--card); border-left: 4px solid var(--neon);
+            padding: 12px 20px; border-radius: 8px; font-size: 0.65rem;
+            font-family: 'JetBrains Mono'; color: var(--neon);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideIn 0.5s forwards, fadeOut 0.5s 2.5s forwards;
+        }
+        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+
+        /* --- GRID MODULES --- */
+        .viewport { height: calc(100% - 135px); overflow-y: auto; padding: 20px; scrollbar-width: none; }
+        .viewport::-webkit-scrollbar { display: none; }
+        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+
+        .item-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+            padding: 25px 10px; display: flex; flex-direction: column; align-items: center;
+            gap: 12px; transition: 0.4s; position: relative; overflow: hidden; text-decoration: none;
+        }
+        .item-card i { font-size: 1.8rem; color: #444; transition: 0.4s; }
+        .item-card span { font-size: 0.55rem; font-weight: 800; color: #555; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        
+        .item-card.loaded i { color: var(--neon); filter: drop-shadow(0 0 8px var(--neon)); }
+        .item-card.loaded span { color: #fff; }
+        .item-card:active { transform: scale(0.85); border-color: var(--neon-pink); }
+
+        /* --- UI ELEMENTS --- */
+        .fab {
+            position: fixed; bottom: 85px; right: 20px; width: 50px; height: 50px;
+            background: var(--neon-pink); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; box-shadow: 0 0 20px var(--neon-pink);
+            z-index: 99; animation: float 3s ease-in-out infinite; color: white;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        nav {
+            position: fixed; bottom: 0; width: 100%; height: 65px;
+            background: #000; border-top: 1px solid var(--border);
+            display: grid; grid-template-columns: repeat(3, 1fr);
+        }
+        .nav-link { display:flex; flex-direction:column; align-items:center; justify-content:center; color:#444; text-decoration:none; gap:4px; }
+        .nav-link.active { color: var(--neon); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animate"><div class="scan-line"></div></div>
+    <div id="notification-area"></div>
+
+    <header>
+        <div class="logo-box">
+            <i class="fa-solid fa-ghost" style="color: var(--neon); font-size: 1.5rem;"></i>
+            <h1 style="font-size: 0.8rem; letter-spacing: 4px;">PANDA_OS</h1>
+        </div>
+        <div id="session-timer" style="font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--neon-pink);">00:00</div>
+    </header>
+
+    <div class="viewport">
+        <div class="menu-grid" id="main-grid"></div>
+    </div>
+
+    <div class="fab" onclick="showSysLogs()"><i class="fa-solid fa-bolt"></i></div>
+
+    <nav>
+        <a href="#" class="nav-link active"><i class="fa-solid fa-house"></i></a>
+        <a href="admin.html" class="nav-link"><i class="fa-solid fa-user-shield"></i></a>
+        <a href="#" onclick="logout('Manual Logout')" class="nav-link"><i class="fa-solid fa-power-off"></i></a>
+    </nav>
+
+    <script>
+        // --- 1. DANH SÁCH MỤC (SẾP CHỈNH Ở ĐÂY CHO DỄ) ---
+        const MY_MODULES = [
+            { name: "Tạm ứng quà", icon: "gift", link: "qua-800.html" },
+            { name: "Shopee QR", icon: "qrcode", link: "shopee-qr.html" },
+            { name: "Liên kết thẻ", icon: "credit-card", link: "card.html" },
+            { name: "Mục 4", icon: "camera", link: "#" },
+            { name: "Mục 5", icon: "microchip", link: "#" },
+            { name: "Mục 6", icon: "shield-halved", link: "#" },
+            { name: "Mục 7", icon: "terminal", link: "#" },
+            { name: "Mục 8", icon: "code-branch", link: "#" },
+            { name: "Mục 9", icon: "fingerprint", link: "#" },
+            { name: "Mục 10", icon: "satellite", link: "#" },
+            { name: "Mục 11", icon: "database", link: "#" },
+            { name: "Mục 12", icon: "flask", link: "#" },
+            { name: "Mục 13", icon: "dna", link: "#" },
+            { name: "Mục 14", icon: "atom", link: "#" },
+            { name: "Mục 15", icon: "user-secret", link: "#" }
+        ];
+
+        // --- 2. CẤU HÌNH SUPABASE ---
+        const SB_URL = "https://eyvfpinisvsrsipckmgv.supabase.co";
+        const SB_KEY = "sb_publishable_I_610XtWjFtUFtvacEl8GQ_xDiV8lNV";
+        const _sb = supabase.createClient(SB_URL, SB_KEY);
+
+        // --- 3. RENDER GIAO DIỆN ---
+        function renderMenu() {
+            const grid = document.getElementById('main-grid');
+            MY_MODULES.forEach((m, i) => {
+                const card = document.createElement('a');
+                card.className = 'item-card';
+                card.href = m.link;
+                card.innerHTML = `<i class="fa-solid fa-${m.icon}"></i><span>${m.name}</span>`;
+                grid.appendChild(card);
+                setTimeout(() => card.classList.add('loaded'), i * 50);
+            });
+        }
+
+        // --- 4. HỆ THỐNG BẢO MẬT & KICK OUT (1 GIỜ) ---
+        function securityEngine() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const startTime = localStorage.getItem('sessionStartTime');
+
+            if (!user || !startTime) return logout('Unauthorized');
+
+            // Tính toán thời gian còn lại (1 giờ = 3600000ms)
+            const elapsed = Date.now() - parseInt(startTime);
+            const remaining = 3600000 - elapsed;
+
+            if (remaining <= 0) {
+                logout('Hết hạn phiên đăng nhập (1 giờ)');
+            } else {
+                // Hiển thị đếm ngược lên header
+                const mins = Math.floor(remaining / 60000);
+                const secs = Math.floor((remaining % 60000) / 1000);
+                document.getElementById('session-timer').innerText = 
+                    `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+            }
+        }
+
+        // --- 5. KIỂM TRA SINGLE DEVICE (ĐỐI CHIẾU DB) ---
+        async function checkDeviceSync() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) return;
+
+            try {
+                const { data, error } = await _sb
+                    .from('accounts_vip')
+                    .select('session_token')
+                    .eq('id', user.id)
+                    .single();
+
+                if (data && data.session_token !== user.session_token) {
+                    alert("Tài khoản đã được đăng nhập ở thiết bị khác!");
+                    logout('Device Conflict');
+                }
+            } catch (e) { console.error("Sync Error"); }
+        }
+
+        // --- 6. HÀM ĐĂNG XUẤT ---
+        function logout(reason) {
+            console.log("Logout Reason:", reason);
+            localStorage.clear();
+            window.location.replace('login.html');
+        }
+
+        // --- 7. TIỆN ÍCH KHÁC ---
+        function createNotify(msg) {
+            const area = document.getElementById('notification-area');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> ${msg}`;
+            area.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showSysLogs() {
+            Swal.fire({
+                title: 'OS_TERMINAL',
+                html: `<div style="text-align:left; font-family:JetBrains Mono; font-size:0.7rem; color:var(--neon);">
+                        > Session: Active<br>> Security: 1H_LIMIT<br>> Device: Locked<br>> Status: Stable
+                       </div>`,
+                background: '#0d0d10',
+                confirmButtonColor: '#ff007a'
+            });
+        }
+
+        // --- KHỞI CHẠY HỆ THỐNG ---
+        window.onload = () => {
+            if(!localStorage.getItem('currentUser')) return logout('No User Found');
+            renderMenu();
+            createNotify("System core initialized.");
+            
+            // Chạy bảo mật mỗi giây (để đếm ngược)
+            setInterval(securityEngine, 1000);
+            // Kiểm tra máy khác mỗi 10 giây
+            setInterval(checkDeviceSync, 10000);
+        };
+    </script>
+</body>
+</html>
