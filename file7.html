@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PANDA ELITE V5 - Anh7.png</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { --momo: #d82d8b; --bg: #0f0f12; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
+        body { background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; min-height: 100vh; }
+        
+        .editor-card { background: #1a1a20; width: 100%; max-width: 400px; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 10px; color: #888; margin-bottom: 4px; text-transform: uppercase; font-weight: bold; }
+        input { width: 100%; padding: 12px; background: #25252d; border: 1px solid #333; border-radius: 10px; color: white; font-size: 15px; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--momo); background: #2a2a35; }
+        
+        .btn { width: 100%; padding: 15px; background: var(--momo); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .btn:active { transform: scale(0.98); }
+
+        .canvas-wrap { width: 100%; max-width: 380px; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 50px rgba(0,0,0,0.5); line-height: 0; }
+        canvas { width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="editor-card">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <h2 style="color: var(--momo); font-size: 1.1rem;">PANDA ELITE V5</h2>
+            <p style="font-size: 9px; color: #666;">PHÔI GỐC: Anh7.png</p>
+        </div>
+
+        <div class="input-group">
+            <label>Giờ iPhone</label>
+            <input type="text" id="iptTime" placeholder="15:28">
+        </div>
+        <div class="input-group">
+            <label>Số thẻ</label>
+            <input type="text" id="iptCardNum" placeholder="9704 1234 5678 9012" oninput="app.render()">
+        </div>
+        <div class="input-group">
+            <label>Chủ thẻ</label>
+            <input type="text" id="iptName" placeholder="NGUYEN VAN QUANG" oninput="this.value = this.value.toUpperCase(); app.render()">
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <div class="input-group" style="flex: 1;">
+                <label>Ngày hết hạn</label>
+                <input type="text" id="iptExp" placeholder="12/28" oninput="app.render()">
+            </div>
+            <div class="input-group" style="flex: 1;">
+                <label>CVV</label>
+                <input type="text" id="iptCVV" placeholder="123" oninput="app.render()">
+            </div>
+        </div>
+        <button class="btn" onclick="app.download()">Tải ảnh kết quả</button>
+    </div>
+
+    <div class="canvas-wrap">
+        <canvas id="mainCanvas"></canvas>
+    </div>
+
+    <script>
+        const app = {
+            canvas: document.getElementById('mainCanvas'),
+            ctx: null,
+            imgBase: new Image(),
+            imgQR: new Image(),
+            qrReady: false,
+
+            config: {
+                w: 1284, h: 2778, 
+                textColor: "#303233", // Màu xám đen chuẩn MoMo
+                timePos: { x: 215, y: 100 }, 
+                // Tọa độ tinh chỉnh cho giao diện Anh7.png
+                cardNumPos: { x: 195, y: 1445 }, 
+                namePos: { x: 195, y: 1675 },  
+                expPos: { x: 195, y: 1905 },
+                cvvPos: { x: 745, y: 1905 }
+            },
+
+            init() {
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = this.config.w;
+                this.canvas.height = this.config.h;
+
+                const now = new Date();
+                document.getElementById('iptTime').value = now.getHours().toString().padStart(2, '0') + ':' + 
+                                                          now.getMinutes().toString().padStart(2, '0');
+
+                // Sử dụng phôi Anh7.png
+                this.imgBase.src = 'Anh7.png'; 
+                this.imgBase.onload = () => this.render();
+                
+                document.getElementById('iptTime').addEventListener('input', () => this.render());
+            },
+
+            render() {
+                const { ctx, config, imgBase } = this;
+                ctx.clearRect(0, 0, config.w, config.h);
+                
+                // 1. Vẽ phôi gốc Anh7.png
+                ctx.drawImage(imgBase, 0, 0, config.w, config.h);
+
+                // 2. Vẽ Giờ mới
+                const timeText = document.getElementById('iptTime').value;
+                ctx.fillStyle = "#000000";
+                ctx.textAlign = "center";
+                ctx.font = "bold 46px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.fillText(timeText, config.timePos.x, config.timePos.y);
+
+                // 3. Vẽ Thông tin thẻ
+                ctx.textAlign = "left";
+                ctx.fillStyle = config.textColor;
+                
+                // Số thẻ
+                ctx.font = "400 52px -apple-system, sans-serif";
+                ctx.fillText(document.getElementById('iptCardNum').value || "9704 1234 5678 9012", config.cardNumPos.x, config.cardNumPos.y);
+
+                // Chủ thẻ
+                ctx.font = "400 53px -apple-system, sans-serif";
+                ctx.fillText(document.getElementById('iptName').value || "NGUYEN VAN QUANG", config.namePos.x, config.namePos.y);
+
+                // Ngày hết hạn
+                ctx.font = "400 52px -apple-system, sans-serif";
+                ctx.fillText(document.getElementById('iptExp').value || "12/28", config.expPos.x, config.expPos.y);
+
+                // CVV
+                ctx.font = "400 52px -apple-system, sans-serif";
+                ctx.fillText(document.getElementById('iptCVV').value || "123", config.cvvPos.x, config.cvvPos.y);
+            },
+
+            download() {
+                const link = document.createElement('a');
+                link.download = `PANDA_CARD_${Date.now()}.png`;
+                link.href = this.canvas.toDataURL('image/png', 1.0);
+                link.click();
+                Swal.fire({ icon: 'success', title: 'Đã lưu ảnh 4K!', showConfirmButton: false, timer: 1200 });
+            }
+        };
+        window.onload = () => app.init();
+    </script>
+</body>
+</html>
