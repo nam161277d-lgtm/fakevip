@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PANDA ELITE V5 - FULL FIX</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root { --shopee: #ee4d2d; --bg: #0f0f12; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; }
+        body { background: #0f0f12; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; min-height: 100vh; }
+        
+        .editor-card { background: #1a1a20; width: 100%; max-width: 400px; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 10px; color: #888; margin-bottom: 4px; text-transform: uppercase; font-weight: bold; }
+        input { width: 100%; padding: 12px; background: #25252d; border: 1px solid #333; border-radius: 10px; color: white; font-size: 15px; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--shopee); background: #2a2a35; }
+        
+        .btn { width: 100%; padding: 15px; background: var(--shopee); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .btn:active { transform: scale(0.98); }
+
+        .canvas-wrap { width: 100%; max-width: 380px; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 50px rgba(0,0,0,0.5); line-height: 0; margin-bottom: 20px; }
+        canvas { width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="editor-card">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <h2 style="color: var(--shopee); font-size: 1.1rem;">PANDA ELITE V5</h2>
+            <p style="font-size: 9px; color: #666;">PHÔI GỐC: Anh11.png</p>
+        </div>
+
+        <div class="input-group">
+            <label>Giờ iPhone</label>
+            <input type="text" id="iptTime" placeholder="15:28">
+        </div>
+        <div class="input-group">
+            <label>Số điện thoại</label>
+            <input type="text" id="iptPhone" placeholder="0987654321" oninput="app.render()">
+        </div>
+        <div class="input-group">
+            <label>Họ và tên (Font To)</label>
+            <input type="text" id="iptName" placeholder="NGUYEN VAN A" oninput="app.render()">
+        </div>
+        <div class="input-group">
+            <label>Chọn Mã QR để ghép đè</label>
+            <input type="file" accept="image/*" onchange="app.handleQR(this)">
+        </div>
+        <button class="btn" onclick="app.download()">Tải ảnh kết quả</button>
+    </div>
+
+    <div class="canvas-wrap">
+        <canvas id="mainCanvas"></canvas>
+    </div>
+
+    <script>
+        const app = {
+            canvas: document.getElementById('mainCanvas'),
+            ctx: null,
+            imgBase: new Image(),
+            imgQR: new Image(),
+            qrReady: false,
+
+            config: {
+                w: 1284, h: 2778, 
+                textColor: "#000000",
+                timePos: { x: 215, y: 105 },
+                phonePos: { x: 160, y: 2400 }, 
+                namePos: { x: 160, y: 2650 }, // Tọa độ cho Họ tên
+                qr: { x: 642, y: 1675, size: 545 } 
+            },
+
+            init() {
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = this.config.w;
+                this.canvas.height = this.config.h;
+
+                const now = new Date();
+                document.getElementById('iptTime').value = now.getHours().toString().padStart(2, '0') + ':' + 
+                                                          now.getMinutes().toString().padStart(2, '0');
+
+                // Sử dụng phôi Anh11.png
+                this.imgBase.src = 'Anh11.png'; 
+                this.imgBase.onload = () => this.render();
+                
+                document.getElementById('iptTime').addEventListener('input', () => this.render());
+            },
+
+            handleQR(input) {
+                if (input.files && input.files[0]) {
+                    const r = new FileReader();
+                    r.onload = (e) => { 
+                        this.imgQR.src = e.target.result; 
+                        this.imgQR.onload = () => { this.qrReady = true; this.render(); }; 
+                    };
+                    r.readAsDataURL(input.files[0]);
+                }
+            },
+
+            render() {
+                const { ctx, config, imgBase, imgQR, qrReady } = this;
+                ctx.clearRect(0, 0, config.w, config.h);
+                
+                // 1. Vẽ phôi gốc
+                ctx.drawImage(imgBase, 0, 0, config.w, config.h);
+
+                // 2. Vẽ Mã QR đè lên
+                if (qrReady) {
+                    const s = config.qr.size;
+                    ctx.drawImage(imgQR, config.qr.x - (s/2), config.qr.y - (s/2), s, s);
+                }
+
+                // 3. Vẽ Giờ iPhone
+                ctx.fillStyle = "#000000";
+                ctx.textAlign = "center";
+                ctx.font = "bold 48px sans-serif";
+                ctx.fillText(document.getElementById('iptTime').value, config.timePos.x, config.timePos.y);
+
+                // 4. Vẽ SĐT
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#333333";
+                ctx.font = "500 48px sans-serif";
+                ctx.fillText(document.getElementById('iptPhone').value || "0987654321", config.phonePos.x, config.phonePos.y);
+
+                // 5. Vẽ HỌ VÀ TÊN (FONT TO, ĐẬM NHƯ MOMO)
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#000000";
+                // Chỉnh font lên 65px và cực đậm (900)
+                ctx.font = "900 65px sans-serif";
+                const name = document.getElementById('iptName').value || "NGUYEN VAN A";
+                ctx.fillText(name.toUpperCase(), config.namePos.x, config.namePos.y);
+            },
+
+            download() {
+                const link = document.createElement('a');
+                link.download = `PANDA_EDIT_${Date.now()}.png`;
+                link.href = this.canvas.toDataURL('image/png', 1.0);
+                link.click();
+            }
+        };
+        window.onload = () => app.init();
+    </script>
+</body>
+</html>
